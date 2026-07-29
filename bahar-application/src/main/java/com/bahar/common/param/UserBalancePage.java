@@ -1,0 +1,19 @@
+package com.bahar.common.param;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import java.io.Serializable;
+
+/**
+ * 会员余额请求参数
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+@Data
+public class UserBalancePage extends PageParam implements Serializable {
+
+    @ApiModelProperty("状态，A正常；D作废")
+    private String status;
+
+}

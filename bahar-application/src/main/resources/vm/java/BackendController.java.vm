@@ -1,0 +1,145 @@
+package com.bahar.module.backendApi.controller;
+
+import com.bahar.common.dto.system.AccountInfo;
+import com.bahar.common.util.TokenUtil;
+import com.bahar.framework.web.BaseController;
+import com.bahar.framework.web.ResponseObject;
+import com.bahar.common.Constants;
+import com.bahar.common.enums.StatusEnum;
+import com.bahar.common.service.${tableClass}Service;
+import com.bahar.framework.pagination.PaginationRequest;
+import com.bahar.framework.pagination.PaginationResponse;
+import com.bahar.framework.exception.BusinessCheckException;
+import com.bahar.repository.model.${className};
+import com.bahar.utils.StringUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * ${moduleName}管理类controller
+ *
+ * Created by ${author}
+ * CopyRight https://www.bahar.cn
+ */
+@Api(tags="管理端-${moduleName}相关接口")
+@RestController
+@AllArgsConstructor
+@RequestMapping(value = "/backendApi/${serviceName}")
+public class Backend${tableClass}Controller extends BaseController {
+
+    /**
+     * ${moduleName}服务接口
+     */
+    private ${tableClass}Service ${serviceName}Service;
+
+    /**
+     * ${moduleName}列表查询
+     */
+    @ApiOperation(value = "${moduleName}列表查询")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @CrossOrigin
+    @PreAuthorize("@pms.hasPermission('${serviceName}:list')")
+    public ResponseObject list(HttpServletRequest request) throws BusinessCheckException {
+        AccountInfo accountInfo = TokenUtil.getAccountInfo();
+        Integer page = request.getParameter("page") == null ? Constants.PAGE_NUMBER : Integer.parseInt(request.getParameter("page"));
+        Integer pageSize = request.getParameter("pageSize") == null ? Constants.PAGE_SIZE : Integer.parseInt(request.getParameter("pageSize"));
+        String status = request.getParameter("status");
+
+        Map<String, Object> params = new HashMap<>();
+        if (accountInfo.getMerchantId() != null && accountInfo.getMerchantId() > 0) {
+            params.put("merchantId", accountInfo.getMerchantId());
+        }
+        if (accountInfo.getStoreId() != null && accountInfo.getStoreId() > 0) {
+            params.put("storeId", accountInfo.getStoreId();
+        }
+        if (storeId != null && storeId > 0) {
+            params.put("storeId", storeId);
+        }
+        if (StringUtil.isNotEmpty(status)) {
+            params.put("status", status);
+        }
+        PaginationResponse<${className}> paginationResponse = ${serviceName}Service.query${tableClass}ListByPagination(new PaginationRequest(page, pageSize, params));
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("paginationResponse", paginationResponse);
+
+        return getSuccessResult(result);
+    }
+
+    /**
+     * 更新${moduleName}状态
+     *
+     * @return
+     */
+    @ApiOperation(value = "更新${moduleName}状态")
+    @RequestMapping(value = "/updateStatus", method = RequestMethod.POST)
+    @CrossOrigin
+    @PreAuthorize("@pms.hasPermission('${serviceName}:edit')")
+    public ResponseObject updateStatus(@RequestBody StatusParam params) throws BusinessCheckException {
+        AccountInfo accountInfo = TokenUtil.getAccountInfo();
+        String status = params.getStatus() == null ? params.getStatus() : StatusEnum.ENABLED.getKey();
+        ${className} ${tablePrefix}${tableClass} = ${serviceName}Service.query${tableClass}ById(params.getId());
+        if (${tablePrefix}${tableClass} == null) {
+            return getFailureResult(201, "该数据不存在");
+        }
+
+        ${tablePrefix}${tableClass}.setOperator(accountInfo.getAccountName());
+        ${tablePrefix}${tableClass}.setStatus(status);
+        ${serviceName}Service.update${tableClass}(${tablePrefix}${tableClass});
+
+        return getSuccessResult(true);
+    }
+
+    /**
+     * 保存${moduleName}
+     */
+    @ApiOperation(value = "保存${moduleName}")
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @CrossOrigin
+    @PreAuthorize("@pms.hasPermission('${serviceName}:add')")
+    public ResponseObject saveHandler(@RequestBody Map<String, Object> params) throws BusinessCheckException {
+        AccountInfo accountInfo = TokenUtil.getAccountInfo();
+        String id = params.get("id") == null ? "" : params.get("id").toString();
+        String status = params.get("status") == null ? StatusEnum.ENABLED.getKey() : params.get("status").toString();
+        String storeId = params.get("storeId") == null ? "0" : params.get("storeId").toString();
+
+        ${className} info = new ${className}();
+        info.setOperator(accountInfo.getAccountName());
+        info.setStatus(status);
+        info.setStoreId(Integer.parseInt(storeId));
+        info.setMerchantId(accountInfo.getMerchantId());
+        if (StringUtil.isNotEmpty(id)) {
+            info.setId(Integer.parseInt(id));
+            ${serviceName}Service.update${tableClass}(info);
+        } else {
+            ${serviceName}Service.add${tableClass}(info);
+        }
+
+        return getSuccessResult(true);
+    }
+
+    /**
+     * 获取${moduleName}详情
+     *
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "获取${moduleName}详情")
+    @RequestMapping(value = "/info/{id}", method = RequestMethod.GET)
+    @CrossOrigin
+    @PreAuthorize("@pms.hasPermission('${serviceName}:list')")
+    public ResponseObject info(@PathVariable("id") Integer id) throws BusinessCheckException {
+        ${className} ${serviceName}Info = ${serviceName}Service.query${tableClass}ById(id);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("${serviceName}Info", ${serviceName}Info);
+
+        return getSuccessResult(result);
+    }
+}

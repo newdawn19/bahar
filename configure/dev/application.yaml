@@ -1,0 +1,26 @@
+message:
+  job:
+    # WebSite：https://www.bahar.cn #########################
+    # 定时发送消息
+    switch: "0"
+    time: "0 0/1 * * * ?"
+couponExpire:
+  job:
+    # 卡券到期处理
+    switch: "0"
+    time: "0 0/1 * * * ?"
+orderCancel:
+  job:
+    # 订单超时取消
+    switch: "0"
+    time: "0 0/1 * * * ?"
+commission:
+  job:
+    # 分佣提成计算
+    switch: "1"
+    time: "0 0/1 * * * ?"
+uploadShippingInfoJob:
+  job:
+    # 微信小程序上传发货信息处理
+    switch: "1"
+    time: "0 0/1 * * * ?"

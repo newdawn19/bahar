@@ -1,0 +1,408 @@
+package com.bahar.common.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.bahar.common.dto.book.BookDto;
+import com.bahar.common.dto.common.DayDto;
+import com.bahar.common.dto.common.TimeDto;
+import com.bahar.common.dto.system.AccountInfo;
+import com.bahar.common.enums.StatusEnum;
+import com.bahar.common.param.BookPage;
+import com.bahar.common.param.BookableParam;
+import com.bahar.common.service.BookService;
+import com.bahar.common.service.SettingService;
+import com.bahar.common.service.StoreService;
+import com.bahar.common.util.DateUtil;
+import com.bahar.framework.annoation.OperationServiceLog;
+import com.bahar.framework.exception.BusinessCheckException;
+import com.bahar.framework.pagination.PaginationResponse;
+import com.bahar.repository.mapper.MtBookItemMapper;
+import com.bahar.repository.mapper.MtBookMapper;
+import com.bahar.repository.model.MtBanner;
+import com.bahar.repository.model.MtBook;
+import com.bahar.repository.model.MtBookItem;
+import com.bahar.repository.model.MtStore;
+import com.bahar.utils.StringUtil;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+
+/**
+ * 预约服务接口
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+@Service
+@AllArgsConstructor(onConstructor_= {@Lazy})
+public class BookServiceImpl extends ServiceImpl<MtBookMapper, MtBook> implements BookService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
+
+    private MtBookMapper mtBookMapper;
+
+    private MtBookItemMapper mtBookItemMapper;
+
+    /**
+     * 系统设置服务接口
+     * */
+    private SettingService settingService;
+
+    /**
+     * 店铺接口
+     */
+    private StoreService storeService;
+
+    /**
+     * 分页查询预约列表
+     *
+     * @param bookPage
+     * @return
+     */
+    @Override
+    public PaginationResponse<BookDto> queryBookListByPagination(BookPage bookPage) {
+        Page<MtBanner> pageHelper = PageHelper.startPage(bookPage.getPage(), bookPage.getPageSize());
+        LambdaQueryWrapper<MtBook> lambdaQueryWrapper = Wrappers.lambdaQuery();
+        lambdaQueryWrapper.ne(MtBook::getStatus, StatusEnum.DISABLE.getKey());
+
+        String name = bookPage.getName();
+        if (StringUtils.isNotBlank(name)) {
+            lambdaQueryWrapper.like(MtBook::getName, name);
+        }
+        Integer cateId = bookPage.getCateId();
+        if (cateId != null && cateId > 0) {
+            lambdaQueryWrapper.like(MtBook::getCateId, cateId);
+        }
+        if (StringUtils.isNotBlank(bookPage.getStatus())) {
+            lambdaQueryWrapper.eq(MtBook::getStatus, bookPage.getStatus());
+        }
+        Integer merchantId = bookPage.getMerchantId();
+        if (merchantId != null && merchantId > 0) {
+            lambdaQueryWrapper.eq(MtBook::getMerchantId, merchantId);
+        }
+        if (bookPage.getStoreId() != null) {
+            lambdaQueryWrapper.and(wq -> wq
+                    .eq(MtBook::getStoreId, 0)
+                    .or()
+                    .eq(MtBook::getStoreId, bookPage.getStoreId()));
+        }
+
+        lambdaQueryWrapper.orderByAsc(MtBook::getSort);
+        List<MtBook> bookList = mtBookMapper.selectList(lambdaQueryWrapper);
+        List<BookDto> dataList = new ArrayList<>();
+        String baseImage = settingService.getUploadBasePath();
+        if (bookList != null && bookList.size() > 0) {
+            for (MtBook mtBook : bookList) {
+                 BookDto bookDto = new BookDto();
+                 BeanUtils.copyProperties(mtBook, bookDto);
+                 bookDto.setLogo(baseImage + mtBook.getLogo());
+                 dataList.add(bookDto);
+            }
+        }
+
+        PageRequest pageRequest = PageRequest.of(bookPage.getPage(), bookPage.getPageSize());
+        PageImpl pageImpl = new PageImpl(dataList, pageRequest, pageHelper.getTotal());
+        PaginationResponse<BookDto> paginationResponse = new PaginationResponse(pageImpl, BookDto.class);
+        paginationResponse.setTotalPages(pageHelper.getPages());
+        paginationResponse.setTotalElements(pageHelper.getTotal());
+        paginationResponse.setContent(dataList);
+
+        return paginationResponse;
+    }
+
+    /**
+     * 添加预约项目
+     *
+     * @param  bookDto 预约信息
+     * @throws BusinessCheckException
+     * @return
+     */
+    @Override
+    @OperationServiceLog(description = "添加预约项目")
+    public MtBook addBook(BookDto bookDto) throws BusinessCheckException {
+        MtBook mtBook = new MtBook();
+        BeanUtils.copyProperties(bookDto, mtBook);
+        Integer storeId = mtBook.getStoreId() == null ? 0 : mtBook.getStoreId();
+        if (mtBook.getMerchantId() == null || mtBook.getMerchantId() <= 0) {
+            MtStore mtStore = storeService.queryStoreById(storeId);
+            if (mtStore != null) {
+                mtBook.setMerchantId(mtStore.getMerchantId());
+            }
+        }
+        if (mtBook.getMerchantId() == null || mtBook.getMerchantId() <= 0) {
+            throw new BusinessCheckException("新增预约失败：所属商户不能为空！");
+        }
+        if (StringUtil.isEmpty(mtBook.getName())) {
+            throw new BusinessCheckException("新增预约失败：项目名称不能为空！");
+        }
+        if (StringUtil.isEmpty(mtBook.getLogo())) {
+            throw new BusinessCheckException("新增预约失败：封面图片不能为空！");
+        }
+        mtBook.setStoreId(storeId);
+        mtBook.setStatus(StatusEnum.ENABLED.getKey());
+        mtBook.setUpdateTime(new Date());
+        mtBook.setCreateTime(new Date());
+        Integer id = mtBookMapper.insert(mtBook);
+        if (id > 0) {
+            return mtBook;
+        } else {
+            logger.error("新增预约失败.");
+            throw new BusinessCheckException("抱歉，新增预约失败！");
+        }
+    }
+
+    /**
+     * 根据ID获取预约项目信息
+     *
+     * @param id 预约项目ID
+     * @param fillDate 填充日期
+     * @return
+     */
+    @Override
+    public BookDto getBookById(Integer id, boolean fillDate) throws ParseException {
+        BookDto bookDto = new BookDto();
+        MtBook mtBook = mtBookMapper.selectById(id);
+        if (mtBook == null) {
+            return null;
+        }
+        BeanUtils.copyProperties(mtBook, bookDto);
+
+        List<DayDto> dateList = new ArrayList<>();
+        String serviceDates = mtBook.getServiceDates();
+
+        // 未填写日期，则未来7天都可以预约
+        if (StringUtil.isEmpty(serviceDates)) {
+            List<String> dates = new ArrayList<>();
+            LocalDate today = LocalDate.now();
+            for (int i = 0; i < 7; i++) {
+                 LocalDate date = today.plusDays(i + 1);
+                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                 String dateString = date.format(formatter);
+                 dates.add(dateString);
+            }
+            serviceDates = String.join(",", dates);
+            if (fillDate) {
+                bookDto.setServiceDates(serviceDates);
+            }
+        }
+
+        if (StringUtil.isNotEmpty(serviceDates)) {
+            List<String> dates = Arrays.asList(serviceDates.split(",").clone());
+            if (dates.size() > 0) {
+                for (String date : dates) {
+                    Date currentDate = DateUtil.parseDate(date + " 23:59:59");
+                    Date now = new Date();
+                    SimpleDateFormat format = new SimpleDateFormat("EEEE", Locale.CHINA);
+                    String week = format.format(currentDate);
+                    DayDto day = new DayDto();
+                    day.setWeek(week);
+                    day.setDate(DateUtil.formatDate(currentDate, "MM-dd"));
+                    if (now.compareTo(currentDate) <= 0) {
+                        day.setEnable(true);
+                    } else {
+                        day.setEnable(false);
+                    }
+                    dateList.add(day);
+                }
+            }
+        }
+        bookDto.setDateList(dateList);
+
+        List<TimeDto> timeList = new ArrayList<>();
+        String serviceTimes = mtBook.getServiceTimes();
+
+        // 未填写时段，则未来
+        if (StringUtil.isEmpty(serviceTimes)) {
+            serviceTimes = "08:30-12:00-1,14:00-18:00-1";
+        }
+
+        if (StringUtil.isNotEmpty(serviceTimes) && bookDto.getDateList().size() > 0) {
+            List<String> times = Arrays.asList(serviceTimes.split(",").clone());
+            if (times.size() > 0) {
+                for (String time : times) {
+                     TimeDto timeDto = new TimeDto();
+                     String arr[] = time.split("-");
+                     timeDto.setTime(arr[0] + "-" + arr[1]);
+                     timeDto.setEnable(true);
+                     timeList.add(timeDto);
+                }
+            }
+        }
+        bookDto.setTimeList(timeList);
+
+        return bookDto;
+    }
+
+    /**
+     * 修改预约项目
+     *
+     * @param  bookDto
+     * @param  accountInfo
+     * @throws BusinessCheckException
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @OperationServiceLog(description = "修改预约项目")
+    public MtBook updateBook(BookDto bookDto, AccountInfo accountInfo) throws BusinessCheckException {
+        MtBook mtBook = mtBookMapper.selectById(bookDto.getId());
+        if (mtBook == null) {
+            throw new BusinessCheckException("该预约项目状态异常");
+        }
+        if (!mtBook.getMerchantId().equals(accountInfo.getMerchantId())) {
+            throw new BusinessCheckException("不同商户，无操作权限");
+        }
+        if (bookDto.getLogo() != null) {
+            mtBook.setLogo(bookDto.getLogo());
+        }
+        if (bookDto.getCateId() != null) {
+            mtBook.setCateId(bookDto.getCateId());
+        }
+        if (bookDto.getName() != null) {
+            mtBook.setName(bookDto.getName());
+        }
+        if (bookDto.getStoreId() != null) {
+            mtBook.setStoreId(bookDto.getStoreId());
+        }
+        if (bookDto.getDescription() != null) {
+            mtBook.setDescription(bookDto.getDescription());
+        }
+        if (bookDto.getOperator() != null) {
+            mtBook.setOperator(bookDto.getOperator());
+        }
+        if (bookDto.getStatus() != null) {
+            mtBook.setStatus(bookDto.getStatus());
+        }
+        if (bookDto.getGoodsId() != null) {
+            mtBook.setGoodsId(bookDto.getGoodsId());
+        }
+        if (bookDto.getSort() != null) {
+            mtBook.setSort(bookDto.getSort());
+        }
+        if (bookDto.getServiceDates() != null) {
+            mtBook.setServiceDates(bookDto.getServiceDates());
+        }
+        if (bookDto.getServiceTimes() != null) {
+            mtBook.setServiceTimes(bookDto.getServiceTimes());
+        }
+        if (bookDto.getServiceStaffIds() != null) {
+            mtBook.setServiceStaffIds(bookDto.getServiceStaffIds());
+        }
+        mtBook.setUpdateTime(new Date());
+        mtBookMapper.updateById(mtBook);
+        return mtBook;
+    }
+
+    /**
+     * 是否可预约
+     *
+     * @param  param
+     * @throws BusinessCheckException
+     * @return
+     * */
+    @Override
+    public List<String> isBookable(BookableParam param) throws BusinessCheckException, ParseException {
+       MtBook mtBook = mtBookMapper.selectById(param.getBookId());
+       List<String> result = new ArrayList<>();
+       if (mtBook == null) {
+           throw new BusinessCheckException("预约项目不存在");
+       }
+
+       List<String> bookList = new ArrayList<>();
+       if (StringUtil.isNotEmpty(param.getDate())) {
+           bookList = mtBookItemMapper.getBookList(param.getBookId(), param.getDate(), param.getTime());
+       }
+
+       // 未填写时段，则默认上午一约、下午一约
+       if (StringUtil.isEmpty(mtBook.getServiceTimes())) {
+           mtBook.setServiceTimes("08:30-12:00-1,14:00-18:00-1");
+       }
+
+       Integer bookNum = bookList.size();
+       Date now = new Date();
+       if (StringUtil.isNotEmpty(param.getTime())) {
+           String[] arr = param.getTime().split("-");
+           String dateTime = param.getDate() + " " + arr[1]+":00";
+           Date currentDate = DateUtil.parseDate(dateTime);
+           Boolean hasBook = false;
+           if (param.getUserId() != null && param.getUserId() > 0 && StringUtil.isNotEmpty(param.getDate())) {
+               MtBookItem mtBookItem = mtBookItemMapper.getBookItemByUserId(param.getUserId(), param.getBookId(), param.getDate(), param.getTime());
+               if (mtBookItem != null) {
+                   hasBook = true;
+               }
+           }
+           if (!hasBook && now.compareTo(currentDate) < 0) {
+               result.add(param.getTime());
+           }
+       } else {
+           String[] times = mtBook.getServiceTimes().split(",");
+           if (times.length > 0) {
+               for (String str : times) {
+                    String[] arr = str.split("-");
+                    if (arr.length > 2) {
+                        String item = arr[0] + "-" + arr[1];
+                        String dateTime = param.getDate() + " " + arr[1]+":00";
+                        Date currentDate = DateUtil.parseDate(dateTime);
+                        Boolean hasBook = false;
+                        if (param.getUserId() != null && param.getUserId() > 0 && StringUtil.isNotEmpty(param.getDate())) {
+                            MtBookItem mtBookItem = mtBookItemMapper.getBookItemByUserId(param.getUserId(), param.getBookId(), param.getDate(), item);
+                            if (mtBookItem != null) {
+                                hasBook = true;
+                            }
+                        }
+                        if ((!bookList.contains(item) || bookNum < Integer.parseInt(arr[2])) && !hasBook && now.compareTo(currentDate) < 0) {
+                            result.add(item);
+                        }
+                    }
+               }
+           }
+       }
+       return result;
+    }
+
+    /**
+     * 获取预约项目列表
+     *
+     * @param  merchantId 商户ID
+     * @param  storeId 店铺ID
+     * @return
+     * */
+    public List<MtBook> getBookList(Integer merchantId, Integer storeId) {
+        LambdaQueryWrapper<MtBook> lambdaQueryWrapper = Wrappers.lambdaQuery();
+        lambdaQueryWrapper.eq(MtBook::getStatus, StatusEnum.ENABLED.getKey());
+        if (merchantId != null && merchantId > 0) {
+            lambdaQueryWrapper.eq(MtBook::getMerchantId, merchantId);
+        }
+        if (storeId != null && storeId > 0) {
+            lambdaQueryWrapper.eq(MtBook::getStoreId, storeId);
+        }
+
+        lambdaQueryWrapper.orderByAsc(MtBook::getSort);
+        List<MtBook> dataList = mtBookMapper.selectList(lambdaQueryWrapper);
+        String baseImage = settingService.getUploadBasePath();
+
+        if (dataList.size() > 0) {
+            for (MtBook book : dataList) {
+                 book.setLogo(baseImage + book.getLogo());
+            }
+        }
+
+        return dataList;
+    }
+}

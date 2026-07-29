@@ -1,0 +1,26 @@
+package com.bahar.module.clientApi.request;
+
+import com.bahar.common.param.PageParam;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import java.io.Serializable;
+
+/**
+ * 售后列表请求参数
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+@Data
+public class RefundListRequest extends PageParam implements Serializable {
+
+    @ApiModelProperty(value="会员ID", name="userId")
+    private Integer userId;
+
+    @ApiModelProperty(value="关键字", name="keyword")
+    private String keyword;
+
+    @ApiModelProperty(value="状态", name="status")
+    private String status;
+
+}

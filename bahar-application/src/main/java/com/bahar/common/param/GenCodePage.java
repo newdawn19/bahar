@@ -1,0 +1,21 @@
+package com.bahar.common.param;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import java.io.Serializable;
+
+/**
+ * 代码生成分页查询参数
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+@Data
+public class GenCodePage extends PageParam implements Serializable {
+
+    @ApiModelProperty("表名")
+    private String tableName;
+
+    @ApiModelProperty("状态")
+    private String status;
+}

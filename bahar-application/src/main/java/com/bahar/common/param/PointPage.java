@@ -1,0 +1,27 @@
+package com.bahar.common.param;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import java.io.Serializable;
+
+/**
+ * 积分分页查询参数
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+@Data
+public class PointPage extends PageParam implements Serializable {
+
+    @ApiModelProperty("描述")
+    private String description;
+
+    @ApiModelProperty("状态")
+    private String status;
+
+    @ApiModelProperty("会员ID")
+    private Integer userId;
+
+    @ApiModelProperty("会员号")
+    private String userNo;
+}

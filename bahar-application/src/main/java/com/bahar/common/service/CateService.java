@@ -1,0 +1,85 @@
+package com.bahar.common.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.bahar.common.dto.goods.GoodsCateDto;
+import com.bahar.common.dto.system.AccountInfo;
+import com.bahar.common.param.GoodsCatePage;
+import com.bahar.framework.exception.BusinessCheckException;
+import com.bahar.framework.pagination.PaginationResponse;
+import com.bahar.repository.model.MtGoodsCate;
+import java.util.List;
+
+/**
+ * 商品分类业务接口
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+public interface CateService extends IService<MtGoodsCate> {
+
+    /**
+     * 分页查询列表
+     *
+     * @param catePage
+     * @return
+     */
+    PaginationResponse<GoodsCateDto> queryCateListByPagination(GoodsCatePage catePage);
+
+    /**
+     * 添加商品分类
+     *
+     * @param  reqDto 分类参数
+     * @throws BusinessCheckException
+     * @return
+     */
+    MtGoodsCate addCate(MtGoodsCate reqDto) throws BusinessCheckException;
+
+    /**
+     * 根据ID获取商品分类信息
+     *
+     * @param  id ID
+     * @return
+     */
+    MtGoodsCate queryCateById(Integer id);
+
+    /**
+     * 根据ID删除
+     *
+     * @param  id 分类ID
+     * @param  accountInfo 操作人
+     * @throws BusinessCheckException
+     * @return
+     */
+    void deleteCate(Integer id, AccountInfo accountInfo) throws BusinessCheckException;
+
+    /**
+     * 更新分类
+     * @param  mtGoodsCate 分类参数
+     * @param  accountInfo 操作人
+     * @throws BusinessCheckException
+     * @return
+     * */
+    MtGoodsCate updateCate(MtGoodsCate mtGoodsCate, AccountInfo accountInfo) throws BusinessCheckException;
+
+    /**
+     * 获取分类列表
+     *
+     * @param merchantId 商户
+     * @param storeId 店铺ID
+     * @param name 店铺名称
+     * @param status 状态
+     * @return
+     * */
+    List<MtGoodsCate> getCateList(Integer merchantId, Integer storeId, String name, String status);
+
+    /**
+     * 获取分类ID
+     *
+     * @param merchantId 商户ID
+     * @param storeId 店铺ID
+     * @param name 分类名称
+     * @return
+     * */
+    Integer getGoodsCateId(Integer merchantId, Integer storeId, String name);
+
+}

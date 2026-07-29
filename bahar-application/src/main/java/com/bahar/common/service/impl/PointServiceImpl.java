@@ -1,0 +1,278 @@
+package com.bahar.common.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.bahar.common.dto.member.PointDto;
+import com.bahar.common.enums.StatusEnum;
+import com.bahar.common.enums.WxMessageEnum;
+import com.bahar.common.param.PointPage;
+import com.bahar.common.service.MemberService;
+import com.bahar.common.service.PointService;
+import com.bahar.common.service.SendSmsService;
+import com.bahar.common.service.WeixinService;
+import com.bahar.common.util.CommonUtil;
+import com.bahar.common.util.DateUtil;
+import com.bahar.framework.annoation.OperationServiceLog;
+import com.bahar.framework.exception.BusinessCheckException;
+import com.bahar.framework.pagination.PaginationResponse;
+import com.bahar.repository.mapper.MtPointMapper;
+import com.bahar.repository.mapper.MtUserMapper;
+import com.bahar.repository.model.MtPoint;
+import com.bahar.repository.model.MtUser;
+import com.bahar.utils.StringUtil;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+
+/**
+ * 积分管理业务实现类
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+@Service
+@AllArgsConstructor(onConstructor_= {@Lazy})
+public class PointServiceImpl extends ServiceImpl<MtPointMapper, MtPoint> implements PointService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PointServiceImpl.class);
+
+    private MtPointMapper mtPointMapper;
+
+    private MtUserMapper mtUserMapper;
+
+    /**
+     * 短信发送服务接口
+     * */
+    private SendSmsService sendSmsService;
+
+    /**
+     * 会员服务接口
+     * */
+    private MemberService memberService;
+
+    /**
+     * 微信相关服务接口
+     * */
+    private WeixinService weixinService;
+
+    /**
+     * 分页查询积分列表
+     *
+     * @param pointPage
+     * @return
+     */
+    @Override
+    public PaginationResponse<PointDto> queryPointListByPagination(PointPage pointPage) {
+        LambdaQueryWrapper<MtPoint> lambdaQueryWrapper = Wrappers.lambdaQuery();
+        lambdaQueryWrapper.ne(MtPoint::getStatus, StatusEnum.DISABLE.getKey());
+
+        String description = pointPage.getDescription();
+        if (StringUtils.isNotBlank(description)) {
+            lambdaQueryWrapper.like(MtPoint::getDescription, description);
+        }
+        String status = pointPage.getStatus();
+        if (StringUtils.isNotBlank(status)) {
+            lambdaQueryWrapper.eq(MtPoint::getStatus, status);
+        }
+        Integer userId = pointPage.getUserId();
+        if (userId != null) {
+            lambdaQueryWrapper.eq(MtPoint::getUserId, userId);
+        }
+        Integer merchantId = pointPage.getMerchantId();
+        if (merchantId != null) {
+            lambdaQueryWrapper.eq(MtPoint::getMerchantId, merchantId);
+        }
+        String userNo = pointPage.getUserNo();
+        if (StringUtil.isNotEmpty(userNo)) {
+            if (merchantId == null) {
+                merchantId = 0;
+            }
+            MtUser userInfo = memberService.queryMemberByUserNo(merchantId, userNo);
+            if (userInfo != null) {
+                lambdaQueryWrapper.eq(MtPoint::getUserId, userInfo.getId());
+            } else {
+                lambdaQueryWrapper.eq(MtPoint::getUserId, -1);
+            }
+        }
+        Integer storeId = pointPage.getStoreId();
+        if (storeId != null) {
+            lambdaQueryWrapper.eq(MtPoint::getStoreId, storeId);
+        }
+
+        lambdaQueryWrapper.orderByDesc(MtPoint::getId);
+        Page<MtPoint> pageHelper = PageHelper.startPage(pointPage.getPage(), pointPage.getPageSize());
+        List<MtPoint> pointList = mtPointMapper.selectList(lambdaQueryWrapper);
+
+        List<PointDto> dataList = new ArrayList<>();
+        for (MtPoint point : pointList) {
+             MtUser userInfo = memberService.queryMemberById(point.getUserId());
+             if (userInfo != null) {
+                userInfo.setMobile(CommonUtil.hidePhone(userInfo.getMobile()));
+             }
+             PointDto item = new PointDto();
+             BeanUtils.copyProperties(point, item);
+             item.setUserInfo(userInfo);
+             dataList.add(item);
+        }
+        PageRequest pageRequest = PageRequest.of(pointPage.getPage(), pointPage.getPageSize());
+        PageImpl pageImpl = new PageImpl(dataList, pageRequest, pageHelper.getTotal());
+        PaginationResponse<PointDto> paginationResponse = new PaginationResponse(pageImpl, PointDto.class);
+        paginationResponse.setTotalPages(pageHelper.getPages());
+        paginationResponse.setTotalElements(pageHelper.getTotal());
+        paginationResponse.setContent(dataList);
+
+        return paginationResponse;
+    }
+
+    /**
+     * 添加积分记录
+     *
+     * @param  mtPoint 积分参数
+     * @throws BusinessCheckException
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @OperationServiceLog(description = "修改会员积分")
+    public void addPoint(MtPoint mtPoint) throws BusinessCheckException {
+        if (mtPoint.getUserId() < 0) {
+           return;
+        }
+        mtPoint.setStatus(StatusEnum.ENABLED.getKey());
+        mtPoint.setCreateTime(new Date());
+        mtPoint.setUpdateTime(new Date());
+        if (mtPoint.getOperator() != null) {
+            mtPoint.setOperator(mtPoint.getOperator());
+        }
+
+        if (mtPoint.getOrderSn() != null) {
+            mtPoint.setOrderSn(mtPoint.getOrderSn());
+        }
+
+        MtUser mtUser = mtUserMapper.selectById(mtPoint.getUserId());
+        Integer newAmount = mtUser.getPoint() + mtPoint.getAmount();
+        if (newAmount < 0) {
+            return;
+        }
+        mtUser.setPoint(newAmount);
+        if (mtUser.getStoreId() != null) {
+            mtPoint.setStoreId(mtUser.getStoreId());
+        }
+        mtPoint.setMerchantId(mtUser.getMerchantId());
+        int result = mtUserMapper.updateById(mtUser);
+        if (result <= 0) {
+            throw new BusinessCheckException("会员积分修改失败");
+        }
+        mtPointMapper.insert(mtPoint);
+
+        try {
+            List<String> mobileList = new ArrayList<>();
+            mobileList.add(mtUser.getMobile());
+            Map<String, String> params = new HashMap<>();
+            String action = "";
+            if (mtPoint.getAmount() > 0) {
+                action = "+";
+            }
+            params.put("amount", action + mtPoint.getAmount().toString());
+            params.put("balance", mtUser.getPoint().toString());
+            sendSmsService.sendSms(mtUser.getMerchantId(), "points-change", mobileList, params);
+        } catch (Exception e) {
+            logger.error("积分变动短信发送失败:{}", e.getMessage());
+        }
+
+        // 发送小程序订阅消息
+        Date nowTime = new Date();
+        Map<String, Object> params = new HashMap<>();
+        String dateTime = DateUtil.formatDate(Calendar.getInstance().getTime(), "yyyy-MM-dd HH:mm");
+        params.put("amount", mtPoint.getAmount());
+        params.put("time", dateTime);
+        params.put("remark", "您的积分发生了变动，请留意~");
+        weixinService.sendSubscribeMessage(mtPoint.getMerchantId(), mtPoint.getUserId(), mtUser.getOpenId(), WxMessageEnum.POINT_CHANGE.getKey(), "pages/user/index", params, nowTime);
+    }
+
+    /**
+     * 转赠积分
+     *
+     * @param userId 会员ID
+     * @param mobile 会员手机
+     * @param amount 积分数
+     * @param remark 备注
+     * @throws BusinessCheckException
+     * @return boolean
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean doGift(Integer userId, String mobile, Integer amount, String remark) throws BusinessCheckException {
+        if (userId < 0 || StringUtil.isEmpty(mobile) || amount <= 0) {
+            return false;
+        }
+
+        MtUser userInfo = memberService.queryMemberById(userId);
+        MtUser fUserInfo = memberService.queryMemberByMobile(userInfo.getMerchantId(), mobile);
+        // 自动注册会员
+        if (fUserInfo == null) {
+            fUserInfo = memberService.addMemberByMobile(userInfo.getMerchantId(), mobile, userId.toString(), "");
+        }
+
+        if (fUserInfo == null) {
+            throw new BusinessCheckException("转赠的好友信息不存在");
+        }
+
+        if (fUserInfo.getId().equals(userInfo.getId())) {
+            throw new BusinessCheckException("积分不能转赠给自己");
+        }
+
+        Integer newAmount = fUserInfo.getPoint() + amount;
+        if (newAmount < 0) {
+            throw new BusinessCheckException("积分赠送失败");
+        }
+        fUserInfo.setPoint(newAmount);
+
+        Integer myNewAmount = userInfo.getPoint() - amount;
+        if (myNewAmount < 0) {
+            throw new BusinessCheckException("您的积分不足");
+        }
+        userInfo.setPoint(myNewAmount);
+
+        mtUserMapper.updateById(fUserInfo);
+        mtUserMapper.updateById(userInfo);
+
+        MtPoint fMtPoint = new MtPoint();
+        fMtPoint.setStatus(StatusEnum.ENABLED.getKey());
+        fMtPoint.setAmount(amount);
+        fMtPoint.setCreateTime(new Date());
+        fMtPoint.setUpdateTime(new Date());
+        fMtPoint.setOperator(userInfo.getName());
+        fMtPoint.setOrderSn("");
+        fMtPoint.setDescription(remark);
+        fMtPoint.setUserId(fUserInfo.getId());
+        fMtPoint.setMerchantId(fUserInfo.getMerchantId());
+        mtPointMapper.insert(fMtPoint);
+
+        MtPoint mtPoint = new MtPoint();
+        mtPoint.setUserId(userId);
+        mtPoint.setAmount(-amount);
+        mtPoint.setStatus(StatusEnum.ENABLED.getKey());
+        mtPoint.setCreateTime(new Date());
+        mtPoint.setUpdateTime(new Date());
+        mtPoint.setOperator(userInfo.getName());
+        mtPoint.setOrderSn("");
+        mtPoint.setDescription("转赠好友");
+        mtPoint.setMerchantId(userInfo.getMerchantId());
+        mtPointMapper.insert(mtPoint);
+
+        return true;
+    }
+}

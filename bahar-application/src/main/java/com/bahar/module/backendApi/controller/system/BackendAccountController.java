@@ -1,0 +1,354 @@
+package com.bahar.module.backendApi.controller.system;
+
+import com.bahar.common.dto.system.AccountDto;
+import com.bahar.common.dto.system.AccountInfo;
+import com.bahar.common.dto.system.RoleDto;
+import com.bahar.common.enums.StatusEnum;
+import com.bahar.common.param.AccountPage;
+import com.bahar.common.service.AccountService;
+import com.bahar.common.service.DutyService;
+import com.bahar.common.service.MerchantService;
+import com.bahar.common.service.StoreService;
+import com.bahar.common.util.CommonUtil;
+import com.bahar.common.util.TokenUtil;
+import com.bahar.framework.exception.BusinessCheckException;
+import com.bahar.framework.pagination.PaginationResponse;
+import com.bahar.framework.web.BaseController;
+import com.bahar.framework.web.ResponseObject;
+import com.bahar.repository.model.MtMerchant;
+import com.bahar.repository.model.MtStore;
+import com.bahar.repository.model.TAccount;
+import com.bahar.repository.model.TDuty;
+import com.bahar.utils.StringUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 后台管理员管理
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+@Api(tags="管理端-管理员相关接口")
+@RestController
+@AllArgsConstructor
+@RequestMapping(value = "/backendApi/account")
+public class BackendAccountController extends BaseController {
+
+    /**
+     * 账户接口
+     */
+    private AccountService tAccountService;
+
+    /**
+     * 角色接口
+     */
+    private DutyService tDutyService;
+
+    /**
+     * 店铺接口
+     */
+    private StoreService storeService;
+
+    /**
+     * 商户服务接口
+     */
+    private MerchantService merchantService;
+
+    /**
+     * 账户信息列表
+     */
+    @ApiOperation(value = "账户信息列表")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @CrossOrigin
+    @PreAuthorize("@pms.hasPermission('system:account:index')")
+    public ResponseObject list(@ModelAttribute AccountPage accountPage) throws BusinessCheckException {
+        AccountInfo accountInfo = TokenUtil.getAccountInfo();
+        if (accountInfo.getMerchantId() != null && accountInfo.getMerchantId() > 0) {
+            accountPage.setMerchantId(accountInfo.getMerchantId());
+        }
+        if (accountInfo.getStoreId() != null && accountInfo.getStoreId() > 0) {
+            accountPage.setStoreId(accountInfo.getStoreId());
+        }
+        PaginationResponse<AccountDto> paginationResponse = tAccountService.getAccountListByPagination(accountPage);
+        return getSuccessResult(paginationResponse);
+    }
+
+    /**
+     * 获取账户详情
+     */
+    @ApiOperation(value = "获取账户详情")
+    @RequestMapping(value = "/info/{userId}", method = RequestMethod.GET)
+    @CrossOrigin
+    public ResponseObject info(@PathVariable("userId") Long userId) throws BusinessCheckException {
+        AccountInfo accountInfo = TokenUtil.getAccountInfo();
+        Map<String, Object> result = new HashMap<>();
+
+        List<TDuty> roleList = tDutyService.getAvailableRoles(accountInfo.getMerchantId(), accountInfo.getId());
+        List<RoleDto> roles = new ArrayList<>();
+        if (roleList.size() > 0) {
+            for (TDuty duty : roleList) {
+                RoleDto roleDto = new RoleDto();
+                roleDto.setId(duty.getDutyId().longValue());
+                roleDto.setName(duty.getDutyName());
+                roleDto.setStatus(duty.getStatus());
+                roles.add(roleDto);
+            }
+        }
+        result.put("roles", roles);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("status", StatusEnum.ENABLED.getKey());
+        if (accountInfo.getStoreId() != null && accountInfo.getStoreId() > 0) {
+            params.put("storeId", accountInfo.getStoreId());
+        }
+        if (accountInfo.getMerchantId() != null && accountInfo.getMerchantId() > 0) {
+            params.put("merchantId", accountInfo.getMerchantId());
+        }
+        List<MtStore> stores = storeService.getMyStoreList(accountInfo.getMerchantId(), accountInfo.getStoreId(), StatusEnum.ENABLED.getKey());
+        result.put("stores", stores);
+
+        List<MtMerchant> merchants = merchantService.getMyMerchantList(accountInfo.getMerchantId(), accountInfo.getStoreId(), StatusEnum.ENABLED.getKey());
+        result.put("merchants", merchants);
+
+        AccountDto accountDto = null;
+        if (userId > 0) {
+            TAccount tAccount = tAccountService.getAccountInfoById(userId.intValue());
+            accountDto = new AccountDto();
+            accountDto.setId(tAccount.getAcctId());
+            accountDto.setAccountKey(tAccount.getAccountKey());
+            accountDto.setAccountName(tAccount.getAccountName());
+            accountDto.setAccountStatus(tAccount.getAccountStatus());
+            accountDto.setCreateDate(tAccount.getCreateDate());
+            accountDto.setRealName(tAccount.getRealName());
+            accountDto.setModifyDate(tAccount.getModifyDate());
+            accountDto.setStaffId(tAccount.getStaffId());
+            accountDto.setMerchantId(tAccount.getMerchantId());
+            if (tAccount.getStoreId() > 0) {
+                accountDto.setStoreId(tAccount.getStoreId());
+                MtStore mtStore = storeService.queryStoreById(tAccount.getStoreId());
+                if (mtStore != null) {
+                    accountDto.setStoreName(mtStore.getName());
+                }
+            }
+            if (tAccount != null) {
+                List<Long> roleIds = tAccountService.getRoleIdsByAccountId(tAccount.getAcctId());
+                result.put("roleIds", roleIds);
+            }
+        } else {
+            result.put("roleIds", "");
+        }
+
+        result.put("account", accountDto);
+        return getSuccessResult(result);
+    }
+
+    /**
+     * 新增账户
+     */
+    @ApiOperation(value = "新增账户")
+    @RequestMapping(value = "/doCreate", method = RequestMethod.POST)
+    @CrossOrigin
+    @PreAuthorize("@pms.hasPermission('system:account:add')")
+    public ResponseObject doCreate(@RequestBody Map<String, Object> param) throws BusinessCheckException {
+        AccountInfo account = TokenUtil.getAccountInfo();
+
+        List<Integer> roleIds = (List) param.get("roleIds");
+        String accountName = param.get("accountName").toString();
+        String accountStatus = param.get("accountStatus").toString();
+        String realName = param.get("realName").toString();
+        String password = param.get("password").toString();
+        String storeId = param.get("storeId") == null ? "0" : param.get("storeId").toString();
+        String merchantId = param.get("merchantId") == null ? "0" : param.get("merchantId").toString();
+        String staffId = param.get("staffId") == null ? "0" : param.get("staffId").toString();
+
+        AccountInfo accountInfo = tAccountService.getAccountByName(accountName);
+        if (accountInfo != null) {
+            return getFailureResult(201, "该用户名已存在");
+        }
+
+        List<TDuty> duties = new ArrayList<>();
+        if (roleIds.size() > 0) {
+            Integer[] roles = roleIds.toArray(new Integer[roleIds.size()]);
+            String[] ids = new String[roles.length];
+            for (int i = 0; i < roles.length; i++) {
+                ids[i] = roles[i].toString();
+            }
+            duties = tDutyService.findDatasByIds(ids);
+            if (duties.size() < roleIds.size()) {
+                return getFailureResult(201, "您分配的角色不存在");
+            }
+        }
+
+        TAccount tAccount = new TAccount();
+        tAccount.setAccountKey(CommonUtil.createAccountKey());
+        tAccount.setRealName(realName);
+        tAccount.setAccountName(accountName);
+        tAccount.setAccountStatus(Integer.parseInt(accountStatus));
+        tAccount.setPassword(password);
+        tAccount.setIsActive(1);
+        tAccount.setLocked(0);
+        tAccount.setOwnerId(account.getOwnerId());
+        if (StringUtil.isNotEmpty(storeId)) {
+            tAccount.setStoreId(Integer.parseInt(storeId));
+        }
+        if (StringUtil.isNotEmpty(merchantId)) {
+            tAccount.setMerchantId(Integer.parseInt(merchantId));
+        }
+        if (StringUtil.isNotEmpty(staffId)) {
+            tAccount.setStaffId(Integer.parseInt(staffId));
+        }
+
+        tAccountService.createAccountInfo(tAccount, duties);
+        return getSuccessResult(true);
+    }
+
+    /**
+     * 修改账户信息
+     */
+    @ApiOperation(value = "修改账户信息")
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @CrossOrigin
+    @PreAuthorize("@pms.hasPermission('system:account:edit')")
+    public ResponseObject update(@RequestBody Map<String, Object> param) throws BusinessCheckException {
+        List<Integer> roleIds = (List) param.get("roleIds");
+        String realName = param.get("realName").toString();
+        String accountName = param.get("accountName").toString();
+        String accountStatus = param.get("accountStatus").toString();
+        String storeId = param.get("storeId") == null ? "" : param.get("storeId").toString();
+        String staffId = param.get("staffId") == null ? "" : param.get("staffId").toString();
+        String merchantId = param.get("merchantId") == null ? "" : param.get("merchantId").toString();
+        Long id = Long.parseLong(param.get("id").toString());
+
+        AccountInfo loginAccount = TokenUtil.getAccountInfo();
+
+        // 不能修改自己的账户信息
+        if (loginAccount.getId().equals(id.intValue())) {
+            return getFailureResult(201, "不能修改自己的账户信息");
+        }
+
+        TAccount tAccount = tAccountService.getAccountInfoById(id.intValue());
+        if (loginAccount.getMerchantId() > 0 && !tAccount.getMerchantId().equals(loginAccount.getMerchantId())) {
+            return getFailureResult(1004);
+        }
+        tAccount.setAcctId(id.intValue());
+        tAccount.setRealName(realName);
+
+        if (StringUtil.isNotEmpty(accountName)) {
+            tAccount.setAccountName(accountName);
+        }
+        if (StringUtil.isNotEmpty(accountStatus)) {
+            tAccount.setAccountStatus(Integer.parseInt(accountStatus));
+        }
+        if (StringUtil.isNotEmpty(storeId)) {
+            tAccount.setStoreId(Integer.parseInt(storeId));
+        }
+        if (StringUtil.isNotEmpty(staffId)) {
+            tAccount.setStaffId(Integer.parseInt(staffId));
+        }
+        if (StringUtil.isNotEmpty(merchantId)) {
+            tAccount.setMerchantId(Integer.parseInt(merchantId));
+        }
+
+        AccountInfo accountInfo = tAccountService.getAccountByName(accountName);
+        if (accountInfo != null && accountInfo.getId() != id.intValue()) {
+            return getFailureResult(201, "该用户名已存在");
+        }
+
+        List<TDuty> duties = null;
+        if (roleIds.size() > 0) {
+            Integer[] roles = roleIds.toArray(new Integer[roleIds.size()]);
+            String[] ids = new String[roles.length];
+            for (int i = 0; i < roles.length; i++) {
+                ids[i] = roles[i].toString();
+            }
+            duties = tDutyService.findDatasByIds(ids);
+            if (duties.size() < roleIds.size()) {
+                return getFailureResult(201, "您分配的角色不存在");
+            }
+        }
+
+        tAccountService.editAccount(tAccount, duties);
+        return getSuccessResult(true);
+    }
+
+    /**
+     * 删除账户信息
+     */
+    @ApiOperation(value = "删除账户信息")
+    @RequestMapping(value = "/delete/{userIds}", method = RequestMethod.GET)
+    @CrossOrigin
+    @PreAuthorize("@pms.hasPermission('system:account:delete')")
+    public ResponseObject deleteAccount(@PathVariable("userIds") String userIds) throws BusinessCheckException {
+        AccountInfo accountInfo = TokenUtil.getAccountInfo();
+        String ids[] = userIds.split(",");
+        if (ids.length > 0) {
+            for (int i = 0; i < ids.length; i++) {
+                 if (StringUtil.isNotEmpty(ids[i])) {
+                     Integer userId = Integer.parseInt(ids[i]);
+                     TAccount tAccount = tAccountService.getAccountInfoById(userId.intValue());
+                     if (tAccount == null) {
+                         return getFailureResult(201, "账户不存在");
+                     }
+                     if (StringUtil.equals(accountInfo.getAccountName(), tAccount.getAccountName())) {
+                         return getFailureResult(201, "您不能删除自己");
+                     }
+                 }
+            }
+            for (int i = 0; i < ids.length; i++) {
+                 if (StringUtil.isNotEmpty(ids[i])) {
+                     Long userId = Long.parseLong(ids[i]);
+                     tAccountService.deleteAccount(userId, accountInfo);
+                 }
+            }
+        }
+        return getSuccessResult(true);
+    }
+
+    /**
+     * 更新账户状态
+     */
+    @ApiOperation(value = "更新账户状态")
+    @RequestMapping(value = "/updateStatus", method = RequestMethod.POST)
+    @CrossOrigin
+    @PreAuthorize("@pms.hasPermission('system:account:edit')")
+    public ResponseObject updateStatus(@RequestBody Map<String, Object> param) throws BusinessCheckException {
+        Integer userId = param.get("userId") == null ? 0 : Integer.parseInt(param.get("userId").toString());
+        Integer status = param.get("status") == null ? 0 : Integer.parseInt(param.get("status").toString());
+
+        AccountInfo accountInfo = TokenUtil.getAccountInfo();
+        TAccount tAccount = tAccountService.getAccountInfoById(userId.intValue());
+        tAccount.setAccountStatus(status);
+        tAccountService.updateAccount(tAccount, accountInfo);
+
+        return getSuccessResult(true);
+    }
+
+    /**
+     * 修改账户密码
+     */
+    @ApiOperation(value = "修改账户密码")
+    @RequestMapping(value = "/resetPwd", method = RequestMethod.POST)
+    @CrossOrigin
+    @PreAuthorize("@pms.hasPermission('system:account:edit')")
+    public ResponseObject resetPwd(@RequestBody Map<String, Object> param) throws BusinessCheckException {
+        Integer userId = param.get("userId") == null ? 0 : Integer.parseInt(param.get("userId").toString());
+        String password = param.get("password") == null ? "" : param.get("password").toString();
+
+        AccountInfo accountInfo = TokenUtil.getAccountInfo();
+        TAccount tAccount = tAccountService.getAccountInfoById(userId.intValue());
+        tAccount.setPassword(password);
+        tAccountService.entryptPassword(tAccount);
+        tAccountService.updateAccount(tAccount, accountInfo);
+
+        return getSuccessResult(true);
+    }
+}

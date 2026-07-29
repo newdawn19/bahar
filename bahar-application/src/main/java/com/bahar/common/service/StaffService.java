@@ -1,0 +1,89 @@
+package com.bahar.common.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.bahar.common.dto.merchant.StaffDto;
+import com.bahar.common.dto.system.AccountInfo;
+import com.bahar.common.param.StaffPage;
+import com.bahar.framework.exception.BusinessCheckException;
+import com.bahar.framework.pagination.PaginationResponse;
+import com.bahar.repository.model.MtStaff;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 店铺员工业务接口
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+public interface StaffService extends IService<MtStaff> {
+
+    /**
+     * 员工查询列表
+     *
+     * @param staffPage
+     * @return
+     */
+    PaginationResponse<StaffDto> queryStaffListByPagination(StaffPage staffPage);
+
+    /**
+     * 保存员工信息
+     *
+     * @param mtStaff 员工信息
+     * @param accountInfo 操作人
+     * @throws BusinessCheckException
+     * @return
+     */
+    MtStaff saveStaff(MtStaff mtStaff, AccountInfo accountInfo) throws BusinessCheckException;
+
+    /**
+     * 根据ID获取店铺信息
+     *
+     * @param  id 员工id
+     * @return
+     */
+    MtStaff queryStaffById(Integer id);
+
+    /**
+     * 审核更改状态(禁用，审核通过)
+     *
+     * @param staffId 员工ID
+     * @param status 状态
+     * @param accountInfo 操作人
+     * @return
+     */
+    Integer updateAuditedStatus(Integer staffId, String status, AccountInfo accountInfo) throws BusinessCheckException;
+
+    /**
+     * 根据条件搜索员工
+     *
+     * @param params 请求参数
+     * @return
+     * */
+    List<MtStaff> queryStaffByParams(Map<String, Object> params);
+
+    /**
+     * 根据手机号获取员工信息
+     *
+     * @param  mobile 手机
+     * @return
+     */
+    MtStaff queryStaffByMobile(String mobile);
+
+    /**
+     * 根据会员ID获取员工信息
+     *
+     * @param userId 会员ID
+     * @return
+     */
+    MtStaff queryStaffByUserId(Integer userId);
+
+    /**
+     * 根据手机号获取员工信息
+     *
+     * @param  mobile 手机
+     * @return
+     */
+    StaffDto getStaffInfoByMobile(String mobile);
+}

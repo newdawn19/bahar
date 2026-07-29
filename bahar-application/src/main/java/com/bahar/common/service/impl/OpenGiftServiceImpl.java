@@ -1,0 +1,368 @@
+package com.bahar.common.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.bahar.common.dto.member.OpenGiftDto;
+import com.bahar.common.dto.system.AccountInfo;
+import com.bahar.common.enums.MessageEnum;
+import com.bahar.common.enums.StatusEnum;
+import com.bahar.common.enums.YesOrNoEnum;
+import com.bahar.common.param.CouponReceiveParam;
+import com.bahar.common.param.OpenGiftPage;
+import com.bahar.common.service.*;
+import com.bahar.common.util.DateUtil;
+import com.bahar.common.util.SeqUtil;
+import com.bahar.framework.annoation.OperationServiceLog;
+import com.bahar.framework.exception.BusinessCheckException;
+import com.bahar.framework.pagination.PaginationResponse;
+import com.bahar.framework.web.ResponseObject;
+import com.bahar.repository.mapper.MtOpenGiftMapper;
+import com.bahar.repository.mapper.MtUserMapper;
+import com.bahar.repository.model.*;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.*;
+
+/**
+ * 开卡赠礼接口实现类
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+@Service
+@AllArgsConstructor(onConstructor_= {@Lazy})
+public class OpenGiftServiceImpl extends ServiceImpl<MtOpenGiftMapper, MtOpenGift> implements OpenGiftService {
+
+    private static final Logger logger = LoggerFactory.getLogger(OpenGiftServiceImpl.class);
+
+    private MtOpenGiftMapper mtOpenGiftMapper;
+
+    private MtUserMapper mtUserMapper;
+
+    /**
+     * 卡券服务接口
+     * */
+    private CouponService couponService;
+
+    /**
+     * 会员等级服务接口
+     * */
+    private UserGradeService userGradeService;
+
+    /**
+     * 会员积分服务接口
+     * */
+    private PointService pointService;
+
+    /**
+     * 系统消息服务接口
+     * */
+    private MessageService messageService;
+
+    /**
+     * 获取开卡赠礼列表
+     *
+     * @param  openGiftPage
+     * @return
+     * */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseObject getOpenGiftList(OpenGiftPage openGiftPage) {
+        Page<MtOpenGift> pageHelper = PageHelper.startPage(openGiftPage.getPage(), openGiftPage.getPageSize());
+        LambdaQueryWrapper<MtOpenGift> lambdaQueryWrapper = Wrappers.lambdaQuery();
+        lambdaQueryWrapper.ne(MtOpenGift::getStatus, StatusEnum.DISABLE.getKey());
+        Integer merchantId = openGiftPage.getMerchantId();
+        if (merchantId != null && merchantId > 0) {
+            lambdaQueryWrapper.eq(MtOpenGift::getMerchantId, merchantId);
+        }
+        Integer couponId = openGiftPage.getCouponId();
+        if (couponId != null && couponId > 0) {
+            lambdaQueryWrapper.eq(MtOpenGift::getCouponId, couponId);
+        }
+        Integer gradeId = openGiftPage.getGradeId();
+        if (gradeId != null && gradeId > 0) {
+            lambdaQueryWrapper.eq(MtOpenGift::getGradeId, gradeId);
+        }
+        String status = openGiftPage.getStatus();
+        if (StringUtils.isNotBlank(status)) {
+            lambdaQueryWrapper.eq(MtOpenGift::getStatus, status);
+        }
+
+        lambdaQueryWrapper.orderByDesc(MtOpenGift::getId);
+        List<MtOpenGift> openGiftList = mtOpenGiftMapper.selectList(lambdaQueryWrapper);
+        List<OpenGiftDto> dataList = new ArrayList<>();
+        for (MtOpenGift item : openGiftList) {
+            OpenGiftDto dto = dealDetail(item);
+            dataList.add(dto);
+        }
+
+        PageRequest pageRequest = PageRequest.of(openGiftPage.getPage(), openGiftPage.getPageSize());
+        PageImpl pageImpl = new PageImpl(dataList, pageRequest, pageHelper.getTotal());
+        PaginationResponse<OpenGiftDto> paginationResponse = new PaginationResponse(pageImpl, OpenGiftDto.class);
+        paginationResponse.setTotalPages(pageHelper.getPages());
+        paginationResponse.setTotalElements(pageHelper.getTotal());
+        paginationResponse.setContent(dataList);
+
+        return new ResponseObject(200, "", paginationResponse);
+    }
+
+    /**
+     * 新增开卡赠礼
+     *
+     * @param  mtOpenGift 赠礼信息
+     * @throws BusinessCheckException
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @OperationServiceLog(description = "新增开卡赠礼")
+    public MtOpenGift addOpenGift(MtOpenGift mtOpenGift) throws BusinessCheckException {
+        if (mtOpenGift.getMerchantId() == null || mtOpenGift.getMerchantId() < 1) {
+            throw new BusinessCheckException("平台方帐号无法执行该操作，请使用商户帐号操作");
+        }
+        mtOpenGift.setUpdateTime(new Date());
+        mtOpenGift.setCreateTime(new Date());
+        if (mtOpenGift.getCouponNum() != null && mtOpenGift.getCouponNum() > 100) {
+            throw new BusinessCheckException("开卡赠礼卡券数量不能大于100");
+        }
+
+        this.save(mtOpenGift);
+        return mtOpenGift;
+    }
+
+    /**
+     * 根据ID获取开卡赠礼详情
+     *
+     * @param  id 开卡赠礼ID
+     * @return
+     */
+    @Override
+    public OpenGiftDto getOpenGiftDetail(Integer id) {
+        MtOpenGift openGift = mtOpenGiftMapper.selectById(id);
+        return dealDetail(openGift);
+    }
+
+    /**
+     * 根据ID删除数据
+     *
+     * @param  id 开卡赠礼ID
+     * @param  accountInfo 操作人
+     * @throws BusinessCheckException
+     * @return
+     */
+    @Override
+    @OperationServiceLog(description = "删除开卡赠礼")
+    public void deleteOpenGift(Integer id, AccountInfo accountInfo) throws BusinessCheckException {
+        MtOpenGift mtOpenGift = mtOpenGiftMapper.selectById(id);
+        if (null == mtOpenGift) {
+            throw new BusinessCheckException("数据不存在，删除开卡赠礼失败");
+        }
+        if (accountInfo.getMerchantId() > 0 && !mtOpenGift.getMerchantId().equals(accountInfo.getMerchantId())) {
+            throw new BusinessCheckException("不同商户，无操作权限");
+        }
+
+        mtOpenGift.setStatus(StatusEnum.DISABLE.getKey());
+        mtOpenGift.setUpdateTime(new Date());
+
+        mtOpenGiftMapper.updateById(mtOpenGift);
+    }
+
+    /**
+     * 更新开卡赠礼
+     *
+     * @param  reqDto 实体参数
+     * @param  accountInfo 操作人
+     * @throws BusinessCheckException
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @OperationServiceLog(description = "更新开卡赠礼")
+    public MtOpenGift updateOpenGift(MtOpenGift reqDto, AccountInfo accountInfo) throws BusinessCheckException {
+        MtOpenGift mtOpenGift = mtOpenGiftMapper.selectById(reqDto.getId());
+        if (mtOpenGift == null) {
+            throw new BusinessCheckException("该数据状态异常");
+        }
+        if (!mtOpenGift.getMerchantId().equals(accountInfo.getMerchantId())) {
+            throw new BusinessCheckException("不同商户，无操作权限");
+        }
+
+        mtOpenGift.setId(reqDto.getId());
+        mtOpenGift.setUpdateTime(new Date());
+
+        if (null != reqDto.getOperator()) {
+            mtOpenGift.setOperator(reqDto.getOperator());
+        }
+
+        if (null != reqDto.getStatus()) {
+            mtOpenGift.setStatus(reqDto.getStatus());
+        }
+
+        if (null != reqDto.getCouponId()) {
+            mtOpenGift.setCouponId(reqDto.getCouponId());
+        }
+
+        if (null != reqDto.getGradeId()) {
+            mtOpenGift.setGradeId(reqDto.getGradeId());
+        }
+
+        if (null != reqDto.getPoint()) {
+            mtOpenGift.setPoint(reqDto.getPoint());
+        }
+
+        if (null != reqDto.getCouponNum()) {
+            if (reqDto.getCouponNum() > 100) {
+                throw new BusinessCheckException("开卡赠礼卡券数量不能大于100");
+            }
+            mtOpenGift.setCouponNum(reqDto.getCouponNum());
+        }
+
+        mtOpenGiftMapper.updateById(mtOpenGift);
+        return mtOpenGift;
+    }
+
+    /**
+     * 开卡赠礼
+     *
+     * @param userId 会员ID
+     * @param gradeId 等级ID
+     * @return
+     * */
+    @Override
+    public Boolean openGift(Integer userId, Integer gradeId, boolean isNewMember) throws BusinessCheckException {
+        if (gradeId == null || gradeId.compareTo(0) <= 0) {
+            return false;
+        }
+        MtUser user = mtUserMapper.selectById(userId);
+        if (user == null) {
+            throw new BusinessCheckException("会员状态异常");
+        }
+        if (user.getIsStaff().equals(YesOrNoEnum.YES.getKey())) {
+            return false;
+        }
+        if (user.getGradeId() == null) {
+            user.setGradeId(0);
+        }
+        MtUserGrade oldGrade = userGradeService.queryUserGradeById(user.getMerchantId(), user.getGradeId(), user.getId());
+        MtUserGrade gradeInfo = userGradeService.queryUserGradeById(user.getMerchantId(), gradeId, user.getId());
+        // 设置有效期
+        if (gradeInfo.getValidDay() >= 0) {
+            user.setStartTime(new Date());
+            Date endDate = new Date();
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(endDate);
+            calendar.add(calendar.DATE, gradeInfo.getValidDay());
+            endDate = calendar.getTime();
+            user.setEndTime(endDate);
+            if (gradeInfo.getValidDay() == 0) {
+                user.setStartTime(null);
+                user.setEndTime(null);
+            }
+        }
+        user.setGradeId(gradeId);
+        user.setUpdateTime(new Date());
+        mtUserMapper.updateById(user);
+        // 会员往低了改变，没有开卡赠礼
+        if (!isNewMember && oldGrade != null && oldGrade.getGrade() >= gradeInfo.getGrade()) {
+            return false;
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("grade_id", gradeId.toString());
+        params.put("status", StatusEnum.ENABLED.getKey());
+        params.put("merchant_id", user.getMerchantId());
+        List<MtOpenGift> openGiftList = mtOpenGiftMapper.selectByMap(params);
+        if (openGiftList.size() > 0) {
+            Integer totalPoint = 0;
+            BigDecimal totalAmount = new BigDecimal("0");
+            for (MtOpenGift item : openGiftList) {
+               // 加积分
+               if (item.getPoint() > 0) {
+                   MtPoint reqPointDto = new MtPoint();
+                   reqPointDto.setUserId(userId);
+                   reqPointDto.setAmount(item.getPoint());
+                   reqPointDto.setDescription("开卡赠送"+ item.getPoint() +"积分");
+                   reqPointDto.setOperator("系统");
+                   pointService.addPoint(reqPointDto);
+                   totalPoint = totalPoint + item.getPoint();
+               }
+               // 返卡券
+               if (item.getCouponId() > 0) {
+                   MtCoupon mtCoupon = couponService.queryCouponById(item.getCouponId());
+                   if (mtCoupon != null && mtCoupon.getStatus().equals(StatusEnum.ENABLED.getKey())) {
+                       try {
+                           CouponReceiveParam param = new CouponReceiveParam();
+                           param.setCouponId(item.getCouponId());
+                           param.setUserId(userId);
+                           param.setNum(item.getCouponNum() == null ? 1 : item.getCouponNum());
+                           ResponseObject result = couponService.sendCoupon(item.getCouponId(), userId, param.getNum(), true, SeqUtil.getUUID(), new AccountInfo());
+                           if (!result.getCode().equals(200)) {
+                               logger.error("会员开卡赠礼赠送卡券失败：", result.getMessage());
+                           }
+                           totalAmount = totalAmount.add(mtCoupon.getAmount());
+                       } catch (Exception e) {
+                           logger.error("会员开卡赠礼异常：", e.getMessage());
+                       }
+                   }
+               }
+            }
+            // 弹框消息
+            MtMessage msg = new MtMessage();
+            msg.setMerchantId(user.getMerchantId());
+            msg.setType(MessageEnum.POP_MSG.getKey());
+            msg.setUserId(userId);
+            msg.setTitle("温馨提示");
+            msg.setSendTime(new Date());
+            msg.setIsSend(YesOrNoEnum.YES.getKey());
+            msg.setParams("");
+            if (totalAmount.compareTo(new BigDecimal("0")) > 0 && totalPoint > 0) {
+                msg.setContent("系统赠送您价值￥" + totalAmount + "卡券和" + totalPoint + "积分，请注意查收！");
+                messageService.addMessage(msg);
+            } else if(totalAmount.compareTo(new BigDecimal("0")) > 0) {
+                msg.setContent("系统赠送您价值" + totalAmount + "卡券，请注意查收！");
+                messageService.addMessage(msg);
+            } else if(totalPoint > 0) {
+                msg.setContent("系统赠送您" + totalPoint + "积分，请注意查收！");
+                messageService.addMessage(msg);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 赠礼详情
+     *
+     * @param  openGiftInfo 赠礼详情
+     * @return OpenGiftDto
+     * */
+    private OpenGiftDto dealDetail(MtOpenGift openGiftInfo) {
+        OpenGiftDto openGiftDto = new OpenGiftDto();
+
+        openGiftDto.setId(openGiftInfo.getId());
+        openGiftDto.setCreateTime(DateUtil.formatDate(openGiftInfo.getCreateTime(), "yyyy.MM.dd HH:mm"));
+        openGiftDto.setUpdateTime(DateUtil.formatDate(openGiftInfo.getUpdateTime(), "yyyy.MM.dd HH:mm"));
+        openGiftDto.setStatus(openGiftInfo.getStatus());
+        openGiftDto.setCouponNum(openGiftInfo.getCouponNum());
+        openGiftDto.setPoint(openGiftInfo.getPoint());
+        openGiftDto.setOperator(openGiftInfo.getOperator());
+
+        MtCoupon couponInfo = couponService.queryCouponById(openGiftInfo.getCouponId());
+        openGiftDto.setCouponInfo(couponInfo);
+
+        MtUserGrade gradeInfo = userGradeService.queryUserGradeById(openGiftInfo.getMerchantId(), openGiftInfo.getGradeId(), 0);
+        openGiftDto.setGradeInfo(gradeInfo);
+
+        return openGiftDto;
+    }
+}

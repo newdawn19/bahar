@@ -1,0 +1,172 @@
+package com.bahar.common.service;
+
+import com.bahar.common.dto.goods.GoodsDto;
+import com.bahar.common.dto.goods.GoodsSpecValueDto;
+import com.bahar.common.dto.goods.GoodsTopDto;
+import com.bahar.common.dto.system.AccountInfo;
+import com.bahar.common.param.GoodsListParam;
+import com.bahar.framework.exception.BusinessCheckException;
+import com.bahar.framework.pagination.PaginationResponse;
+import com.bahar.repository.model.MtGoods;
+import com.bahar.repository.model.MtGoodsSku;
+import com.bahar.repository.model.MtGoodsSpec;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 商品业务接口
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+public interface GoodsService {
+
+    /**
+     * 分页查询商品列表
+     *
+     * @param  param
+     * @return
+     */
+    PaginationResponse<GoodsDto> queryGoodsListByPagination(GoodsListParam param);
+
+    /**
+     * 保存商品
+     *
+     * @param  reqDto 商品信息
+     * @param  storeIds 分配店铺
+     * @throws BusinessCheckException
+     * @return
+     */
+    MtGoods saveGoods(MtGoods reqDto, String storeIds) throws BusinessCheckException;
+
+    /**
+     * 更新商品状态
+     *
+     * @param  goodsId 商品ID
+     * @param  status 状态
+     * @param  accountInfo 操作人
+     * @throws BusinessCheckException
+     * @return
+     */
+    Boolean updateStatus(Integer goodsId, String status, AccountInfo accountInfo) throws BusinessCheckException;
+
+    /**
+     * 根据ID获取商品信息
+     *
+     * @param  id 商品ID
+     * @return
+     */
+    MtGoods queryGoodsById(Integer id);
+
+    /**
+     * 根据编码获取商品信息
+     *
+     * @param  merchantId 商户ID
+     * @param  goodsNo 商品编码
+     * @return
+     */
+    MtGoods queryGoodsByGoodsNo(Integer merchantId, String goodsNo);
+
+    /**
+     * 根据条码获取sku信息
+     *
+     * @param  skuNo skuNo
+     * @return
+     * */
+    MtGoodsSku getSkuInfoBySkuNo(String skuNo);
+
+    /**
+     * 根据ID获取商品详情
+     *
+     * @param  id 商品ID
+     * @return
+     */
+    GoodsDto getGoodsDetail(Integer id, boolean getDeleteSpec);
+
+    /**
+     * 获取店铺的商品列表
+     *
+     * @param storeId 店铺ID
+     * @param keyword 关键字
+     * @param platform 平台
+     * @param cateId 分类ID
+     * @param page 当前页码
+     * @param pageSize 每页数量
+     * @return
+     * */
+    Map<String, Object> getStoreGoodsList(Integer storeId, String keyword, String platform, Integer cateId, Integer page, Integer pageSize);
+
+    /**
+     * 根据skuId获取规格列表
+     *
+     * @param skuId
+     * @return
+     * */
+    List<GoodsSpecValueDto> getSpecListBySkuId(Integer skuId);
+
+    /**
+     * 获取规格详情
+     *
+     * @param specId 规格ID
+     * @return
+     * */
+    MtGoodsSpec getSpecDetail(Integer specId);
+
+    /**
+     * 更新已售数量
+     *
+     * @param goodsId 商品ID
+     * @param saleNum 销售数量
+     * @return
+     * */
+    Boolean updateInitSale(Integer goodsId, Double saleNum);
+
+    /**
+     * 获取选择商品列表
+     *
+     * @param params 查询参数
+     * @return
+     */
+    PaginationResponse<GoodsDto> selectGoodsList(Map<String, Object> params);
+
+    /**
+     * 获取商品销售排行榜
+     *
+     * @param merchantId 商户ID
+     * @param storeId 店铺ID
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return
+     * */
+    List<GoodsTopDto> getGoodsSaleTopList(Integer merchantId, Integer storeId, Date startTime, Date endTime);
+
+    /**
+     * 获取商品分配的店铺
+     *
+     * @param goodsId 商品ID
+     * @return
+     * */
+    String getStoreIds(Integer goodsId);
+
+    /**
+     * 导入商品
+     *
+     * @param file excel文件
+     * @param accountInfo 操作者
+     * @param filePath 文件地址
+     * */
+    Boolean importGoods(MultipartFile file, AccountInfo accountInfo, String filePath) throws BusinessCheckException;
+
+    /**
+     * 获取规格ID
+     *
+     * @param goodsId 商品ID
+     * @param specName 规格名称
+     * @param specValue 规格值
+     * */
+    Integer getSpecId(Integer goodsId, String specName, String specValue);
+
+}

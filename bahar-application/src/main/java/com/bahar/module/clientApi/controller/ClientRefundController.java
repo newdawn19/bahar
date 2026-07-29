@@ -1,0 +1,161 @@
+package com.bahar.module.clientApi.controller;
+
+import com.bahar.common.dto.member.UserInfo;
+import com.bahar.common.dto.order.RefundDto;
+import com.bahar.common.dto.order.UserOrderDto;
+import com.bahar.common.dto.system.AccountInfo;
+import com.bahar.common.enums.RefundStatusEnum;
+import com.bahar.common.param.RefundInfoParam;
+import com.bahar.common.service.OrderService;
+import com.bahar.common.service.RefundService;
+import com.bahar.common.util.TokenUtil;
+import com.bahar.framework.exception.BusinessCheckException;
+import com.bahar.framework.web.BaseController;
+import com.bahar.framework.web.ResponseObject;
+import com.bahar.module.clientApi.request.RefundListRequest;
+import com.bahar.module.clientApi.request.RefundSubmitRequest;
+import com.bahar.repository.model.MtRefund;
+import com.bahar.utils.StringUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 售后类controller
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+@Api(tags="会员端-售后相关接口")
+@RestController
+@AllArgsConstructor
+@RequestMapping(value = "/clientApi/refund")
+public class ClientRefundController extends BaseController {
+
+    /**
+     * 售后服务接口
+     * */
+    private RefundService refundService;
+
+    /**
+     * 订单服务接口
+     * */
+    private OrderService orderService;
+
+    /**
+     * 获取售后订单列表
+     */
+    @ApiOperation(value = "获取售后订单列表")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @CrossOrigin
+    public ResponseObject list(@ModelAttribute RefundListRequest param) throws BusinessCheckException {
+        UserInfo userInfo = TokenUtil.getUserInfo();
+        String status = param.getStatus() != null ? param.getStatus() : "";
+        if (status.equals("1")) {
+            status = RefundStatusEnum.CREATED.getKey();
+        } else {
+            status = "";
+        }
+        param.setUserId(userInfo.getId());
+        param.setStatus(status);
+        ResponseObject orderData = refundService.getUserRefundList(param);
+        return getSuccessResult(orderData.getData());
+    }
+
+    /**
+     * 售后订单提交
+     */
+    @ApiOperation(value = "售后订单提交")
+    @RequestMapping(value = "/submit", method = RequestMethod.POST)
+    @CrossOrigin
+    public ResponseObject submit(@RequestBody RefundSubmitRequest param) {
+        UserInfo mtUser = TokenUtil.getUserInfo();
+        param.setUserId(mtUser.getId());
+
+        Integer orderId = param.getOrderId() == null ? 0 : param.getOrderId();
+        String remark = param.getRemark() == null ? "" : param.getRemark();
+        String type = param.getType() == null ? "" : param.getType();
+        List<String> images = param.getImages() == null ? new ArrayList<>() : param.getImages();
+
+        UserOrderDto order = orderService.getOrderById(orderId);
+        if (order == null || (!order.getUserId().equals(mtUser.getId()))) {
+            return getFailureResult(201);
+        }
+
+        RefundDto refundDto = new RefundDto();
+        refundDto.setUserId(mtUser.getId());
+        refundDto.setOrderId(order.getId());
+        refundDto.setRemark(remark);
+        refundDto.setType(type);
+        if (order.getStoreInfo() != null) {
+            refundDto.setStoreId(order.getStoreInfo().getId());
+        }
+        refundDto.setMerchantId(order.getMerchantId());
+        if (order.getStoreInfo() != null) {
+            refundDto.setStoreId(order.getStoreInfo().getId());
+        }
+        refundDto.setAmount(order.getPayAmount());
+        if (images.size() > 0) {
+            refundDto.setImages(String.join(",", images));
+        }
+        MtRefund refundInfo = refundService.createRefund(refundDto);
+
+        Map<String, Object> outParams = new HashMap();
+        outParams.put("refundInfo", refundInfo);
+
+        ResponseObject responseObject = getSuccessResult(outParams);
+        return getSuccessResult(responseObject.getData());
+    }
+
+    /**
+     * 获取售后订单详情
+     */
+    @ApiOperation(value = "获取售后订单详情")
+    @RequestMapping(value = "/detail", method = RequestMethod.GET)
+    @CrossOrigin
+    public ResponseObject detail(HttpServletRequest request) throws BusinessCheckException {
+        String refundId = request.getParameter("refundId");
+        if (StringUtil.isEmpty(refundId)) {
+            return getFailureResult(201, "售后订单ID不能为空");
+        }
+        RefundDto refundInfo = refundService.getRefundById(Integer.parseInt(refundId));
+        return getSuccessResult(refundInfo);
+    }
+
+    /**
+     * 售后用户发货
+     */
+    @ApiOperation(value = "售后用户发货")
+    @RequestMapping(value = "/delivery", method = RequestMethod.POST)
+    @CrossOrigin
+    public ResponseObject delivery(@RequestBody RefundInfoParam params) throws BusinessCheckException {
+        UserInfo mtUser = TokenUtil.getUserInfo();
+
+        RefundDto refundInfo = refundService.getRefundById(params.getRefundId());
+        if (refundInfo == null || (!refundInfo.getUserId().equals(mtUser.getId()))) {
+            return getFailureResult(201);
+        }
+
+        if (StringUtil.isEmpty(params.getExpressName()) || StringUtil.isEmpty(params.getExpressNo())) {
+            return getFailureResult(201, "物流信息不能为空");
+        }
+
+        RefundDto refundDto = new RefundDto();
+        refundDto.setId(params.getRefundId());
+        refundDto.setExpressName(params.getExpressName());
+        refundDto.setExpressNo(params.getExpressNo());
+        AccountInfo accountInfo = new AccountInfo();
+        accountInfo.setAccountName(mtUser.getMobile());
+        accountInfo.setMerchantId(refundInfo.getMerchantId());
+        refundService.updateRefund(refundDto, accountInfo);
+
+        return getSuccessResult(true);
+    }
+}

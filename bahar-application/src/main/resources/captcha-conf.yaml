@@ -1,0 +1,30 @@
+kaptcha:
+  # 是否有边框
+  border: "yes"
+  # 边框颜色
+  "border.color": "204,204,204"
+  background:
+    clear:
+      # 背景渐变开始颜色
+      from: "245,245,245"
+      # 背景渐变结束颜色
+      to: "245,245,245"
+  noise:
+    # 干扰线颜色
+    color: "195,35,97"
+  textproducer:
+    font:
+      # 验证码文本字符颜色
+      color: "195,35,97"
+      # 验证码文本字符大小
+      size: "40"
+      # 验证码文本字体样式
+      names: "宋体,楷体,微软雅黑"
+    char:
+      # 验证码文本字符长度
+      length: "4"
+  image:
+    # 验证码图片宽度
+    width: "125"
+    # 验证码图片高度
+    height: "60"

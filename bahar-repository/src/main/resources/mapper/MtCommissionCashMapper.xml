@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bahar.repository.mapper.MtCommissionCashMapper">
+    <update id="confirmCommissionCash">
+        update mt_commission_cash set STATUS = 'B',OPERATOR = #{operator} where uuid = #{uuid}
+        <if test="merchantId != null and merchantId > 0">
+            AND MERCHANT_ID = #{merchantId}
+        </if>
+    </update>
+
+    <update id="cancelCommissionCash">
+        update mt_commission_cash set STATUS = 'D',OPERATOR = #{operator} where uuid = #{uuid}
+        <if test="merchantId != null and merchantId > 0">
+            AND MERCHANT_ID = #{merchantId}
+        </if>
+    </update>
+
+    <select id="getWithdrawAmount" resultType="java.math.BigDecimal">
+        SELECT IFNULL(SUM(AMOUNT), 0) FROM mt_commission_cash
+        WHERE USER_ID = #{userId} AND STATUS = 'D'
+    </select>
+</mapper>

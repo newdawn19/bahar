@@ -1,0 +1,259 @@
+package com.bahar.common.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.bahar.common.Constants;
+import com.bahar.common.dto.order.SettlementDto;
+import com.bahar.common.dto.order.SettlementOrderDto;
+import com.bahar.common.dto.order.UserOrderDto;
+import com.bahar.common.dto.system.AccountInfo;
+import com.bahar.common.enums.*;
+import com.bahar.common.param.OrderListParam;
+import com.bahar.common.param.SettlementPage;
+import com.bahar.common.service.MerchantService;
+import com.bahar.common.service.OrderService;
+import com.bahar.common.service.SettlementService;
+import com.bahar.common.util.CommonUtil;
+import com.bahar.framework.annoation.OperationServiceLog;
+import com.bahar.framework.exception.BusinessCheckException;
+import com.bahar.framework.pagination.PaginationResponse;
+import com.bahar.module.backendApi.request.SettlementRequest;
+import com.bahar.repository.mapper.MtSettlementMapper;
+import com.bahar.repository.mapper.MtSettlementOrderMapper;
+import com.bahar.repository.model.*;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 订单结算相关业务接口
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+@Service
+@AllArgsConstructor(onConstructor_= {@Lazy})
+public class SettlementServiceImpl implements SettlementService {
+
+    private MtSettlementMapper mtSettlementMapper;
+
+    private MtSettlementOrderMapper mtSettlementOrderMapper;
+
+    /**
+     * 订单服务接口
+     * */
+    private OrderService orderService;
+
+    /**
+     * 商户服务接口
+     * */
+    private MerchantService merchantService;
+
+    /**
+     * 分页查询结算列表
+     *
+     * @param settlementPage
+     * @return
+     */
+    @Override
+    public PaginationResponse<MtSettlement> querySettlementListByPagination(SettlementPage settlementPage) {
+        Page<MtBanner> pageHelper = PageHelper.startPage(settlementPage.getPage(), settlementPage.getPageSize());
+        LambdaQueryWrapper<MtSettlement> lambdaQueryWrapper = Wrappers.lambdaQuery();
+        lambdaQueryWrapper.ne(MtSettlement::getStatus, StatusEnum.DISABLE.getKey());
+
+        String status = settlementPage.getStatus();
+        if (StringUtils.isNotBlank(status)) {
+            lambdaQueryWrapper.eq(MtSettlement::getStatus, status);
+        }
+        Integer merchantId = settlementPage.getMerchantId();
+        if (merchantId != null) {
+            lambdaQueryWrapper.eq(MtSettlement::getMerchantId, merchantId);
+        }
+        Integer storeId = settlementPage.getStoreId();
+        if (storeId != null) {
+            lambdaQueryWrapper.eq(MtSettlement::getStoreId, storeId);
+        }
+        String description = settlementPage.getDescription();
+        if (StringUtils.isNotBlank(description)) {
+            lambdaQueryWrapper.like(MtSettlement::getDescription, description);
+        }
+        lambdaQueryWrapper.orderByDesc(MtSettlement::getId);
+        List<MtSettlement> dataList = mtSettlementMapper.selectList(lambdaQueryWrapper);
+
+        PageRequest pageRequest = PageRequest.of(settlementPage.getPage(), settlementPage.getPageSize());
+        PageImpl pageImpl = new PageImpl(dataList, pageRequest, pageHelper.getTotal());
+        PaginationResponse<MtSettlement> paginationResponse = new PaginationResponse(pageImpl, MtSettlement.class);
+        paginationResponse.setTotalPages(pageHelper.getPages());
+        paginationResponse.setTotalElements(pageHelper.getTotal());
+        paginationResponse.setContent(dataList);
+
+        return paginationResponse;
+    }
+
+    /**
+     * 提交结算
+     *
+     * @param  requestParam
+     * @throws BusinessCheckException
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @OperationServiceLog(description = "发起结算")
+    public Boolean submitSettlement(SettlementRequest requestParam) throws BusinessCheckException {
+        OrderListParam orderParam = new OrderListParam();
+        orderParam.setMerchantId(requestParam.getMerchantId());
+        orderParam.setStoreId(requestParam.getStoreId());
+        orderParam.setDataType("paid");
+        orderParam.setStartTime(requestParam.getStartTime());
+        orderParam.setEndTime(requestParam.getEndTime());
+        orderParam.setSettleStatus(SettleStatusEnum.WAIT.getKey());
+        orderParam.setStatus(OrderStatusEnum.COMPLETE.getKey());
+        List<String> payType = new ArrayList<>();
+        payType.add(PayTypeEnum.JSAPI.getKey());
+        payType.add(PayTypeEnum.MICROPAY.getKey());
+        payType.add(PayTypeEnum.ALISCAN.getKey());
+        orderParam.setPayType(payType);
+
+        orderParam.setPage(Constants.PAGE_NUMBER);
+        orderParam.setPageSize(Constants.ALL_ROWS);
+
+        PaginationResponse response = orderService.getUserOrderList(orderParam);
+        List<UserOrderDto> orderList = response.getContent();
+        if (orderList == null || orderList.size() < 1) {
+            throw new BusinessCheckException("暂无符合结算条件的订单");
+        }
+
+        BigDecimal amount = new BigDecimal("0");
+        BigDecimal totalOrderAmount = new BigDecimal("0");
+        if (orderList != null && orderList.size() > 0) {
+            for (UserOrderDto orderDto : orderList) {
+                 amount = amount.add(orderDto.getPayAmount());
+                 totalOrderAmount = totalOrderAmount.add(orderDto.getPayAmount());
+            }
+        }
+        MtSettlement mtSettlement = new MtSettlement();
+        mtSettlement.setMerchantId(requestParam.getMerchantId());
+        mtSettlement.setStoreId(requestParam.getStoreId());
+        mtSettlement.setSettlementNo(CommonUtil.createSettlementNo());
+
+        MtMerchant mtMerchant = merchantService.queryMerchantById(requestParam.getMerchantId());
+        BigDecimal percent = new BigDecimal("1");
+        if (mtMerchant.getSettleRate() != null && mtMerchant.getSettleRate().compareTo(new BigDecimal("0")) > 0) {
+            percent = mtMerchant.getSettleRate().divide(new BigDecimal("100"), BigDecimal.ROUND_CEILING, 4);
+        }
+        mtSettlement.setAmount(amount.multiply(percent));
+        mtSettlement.setSettleRate(percent.multiply(new BigDecimal("100")));
+        mtSettlement.setTotalOrderAmount(totalOrderAmount);
+        mtSettlement.setStatus(StatusEnum.ENABLED.getKey());
+        mtSettlement.setOperator(requestParam.getOperator());
+        mtSettlement.setCreateTime(new Date());
+        mtSettlement.setUpdateTime(new Date());
+        mtSettlementMapper.insert(mtSettlement);
+        if (orderList != null && orderList.size() > 0) {
+            for (UserOrderDto orderDto : orderList) {
+                 MtSettlementOrder mtSettlementOrder = new MtSettlementOrder();
+                 mtSettlementOrder.setSettlementId(mtSettlement.getId());
+                 mtSettlementOrder.setOrderId(orderDto.getId());
+                 mtSettlementOrder.setCreateTime(new Date());
+                 mtSettlementOrder.setUpdateTime(new Date());
+                 mtSettlement.setStatus(StatusEnum.ENABLED.getKey());
+                 mtSettlementOrder.setOperator(mtSettlement.getOperator());
+                 mtSettlementOrderMapper.insert(mtSettlementOrder);
+                 // 把订单设置为已结算
+                 MtOrder mtOrder = orderService.getById(orderDto.getId());
+                 mtOrder.setSettleStatus(SettleStatusEnum.COMPLETE.getKey());
+                 orderService.updateOrder(mtOrder);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 结算确认
+     *
+     * @param  settlementId 结算ID
+     * @param  accountInfo 操作人
+     * @throws BusinessCheckException
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @OperationServiceLog(description = "结算确认")
+    public Boolean doConfirm(Integer settlementId, AccountInfo accountInfo) throws BusinessCheckException {
+       MtSettlement mtSettlement = mtSettlementMapper.selectById(settlementId);
+       if (mtSettlement == null) {
+           throw new BusinessCheckException("结算数据不存在");
+       }
+       if (accountInfo.getMerchantId() > 0 && !mtSettlement.getMerchantId().equals(accountInfo.getMerchantId())) {
+           throw new BusinessCheckException("不同商户，没有操作权限");
+       }
+       mtSettlement.setStatus(SettleStatusEnum.COMPLETE.getKey());
+       mtSettlement.setPayStatus(PayStatusEnum.SUCCESS.getKey());
+       mtSettlement.setUpdateTime(new Date());
+       mtSettlement.setOperator(accountInfo.getAccountName());
+       mtSettlementMapper.updateById(mtSettlement);
+       return true;
+    }
+
+    /**
+     * 获取结算详情
+     *
+     * @param settlementId 结算ID
+     * @param page 当前页码
+     * @param pageSize 每页数量
+     * @return
+     * */
+    @Override
+    public SettlementDto getSettlementInfo(Integer settlementId, Integer page, Integer pageSize) throws BusinessCheckException {
+        MtSettlement mtSettlement = mtSettlementMapper.selectById(settlementId);
+        if (mtSettlement == null) {
+            throw new BusinessCheckException("结算单不存在");
+        }
+
+        SettlementDto settlementDto = new SettlementDto();
+        BeanUtils.copyProperties(mtSettlement, settlementDto);
+
+        Page<MtBanner> pageHelper = PageHelper.startPage(page, pageSize);
+        LambdaQueryWrapper<MtSettlementOrder> lambdaQueryWrapper = Wrappers.lambdaQuery();
+        lambdaQueryWrapper.ne(MtSettlementOrder::getStatus, StatusEnum.DISABLE.getKey());
+        lambdaQueryWrapper.eq(MtSettlementOrder::getSettlementId, settlementId);
+        lambdaQueryWrapper.orderByDesc(MtSettlementOrder::getId);
+        List<MtSettlementOrder> dataList = mtSettlementOrderMapper.selectList(lambdaQueryWrapper);
+
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+        PageImpl pageImpl = new PageImpl(dataList, pageRequest, pageHelper.getTotal());
+        PaginationResponse<SettlementOrderDto> paginationResponse = new PaginationResponse(pageImpl, SettlementOrderDto.class);
+        paginationResponse.setTotalPages(pageHelper.getPages());
+        paginationResponse.setTotalElements(pageHelper.getTotal());
+
+        List<SettlementOrderDto> orderList = new ArrayList<>();
+        if (dataList != null && dataList.size() > 0) {
+            for (MtSettlementOrder mtSettlementOrder : dataList) {
+                 SettlementOrderDto settlementOrderDto = new SettlementOrderDto();
+                 BeanUtils.copyProperties(mtSettlementOrder, settlementOrderDto);
+                 UserOrderDto orderDto = orderService.getOrderById(settlementOrderDto.getOrderId());
+                 if (orderDto != null) {
+                     settlementOrderDto.setOrderInfo(orderDto);
+                 }
+                 orderList.add(settlementOrderDto);
+            }
+        }
+        paginationResponse.setContent(orderList);
+
+        settlementDto.setOrderList(paginationResponse);
+        return settlementDto;
+    }
+}

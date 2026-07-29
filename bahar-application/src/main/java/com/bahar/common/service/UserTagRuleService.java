@@ -1,0 +1,94 @@
+package com.bahar.common.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.bahar.common.dto.system.AccountInfo;
+import com.bahar.framework.exception.BusinessCheckException;
+import com.bahar.repository.model.MtOrder;
+import com.bahar.repository.model.MtUser;
+import com.bahar.repository.model.MtUserTagRule;
+
+import java.util.List;
+
+/**
+ * 会员标签规则服务接口
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+public interface UserTagRuleService extends IService<MtUserTagRule> {
+
+    /**
+     * 获取商户规则列表
+     *
+     * @param merchantId 商户ID
+     * @param status 状态
+     * @return
+     */
+    List<MtUserTagRule> getMerchantRuleList(Integer merchantId, String status);
+
+    /**
+     * 添加规则
+     *
+     * @param rule 规则信息
+     * @param merchantId 当前商户ID
+     * @return
+     * @throws BusinessCheckException
+     */
+    MtUserTagRule addRule(MtUserTagRule rule, Integer merchantId) throws BusinessCheckException;
+
+    /**
+     * 编辑规则
+     *
+     * @param rule 规则信息
+     * @param accountInfo 当前商户ID
+     * @return
+     * @throws BusinessCheckException
+     */
+    MtUserTagRule updateRule(MtUserTagRule rule, AccountInfo accountInfo) throws BusinessCheckException;
+
+    /**
+     * 删除规则
+     *
+     * @param id 规则ID
+     * @param accountInfo 当前登录账号信息
+     * @throws BusinessCheckException
+     */
+    void deleteRule(Integer id, AccountInfo accountInfo) throws BusinessCheckException;
+
+    /**
+     * 执行单个会员的标签规则
+     *
+     * @param user 会员信息
+     * @param order 订单信息（可选）
+     * @param ruleId 规则ID
+     * @param accountInfo 当前登录账号信息
+     * @return
+     */
+    void executeRulesForUser(MtUser user, MtOrder order, Integer ruleId, AccountInfo accountInfo);
+
+    /**
+     * 批量执行标签规则
+     *
+     * @param ruleId 规则ID
+     * @param accountInfo 当前登录账号信息
+     * @return
+     */
+    void executeRules(Integer ruleId, AccountInfo accountInfo);
+
+    /**
+     * 根据标签ID获取规则
+     *
+     * @param tagId 标签ID
+     * @return
+     */
+    MtUserTagRule getRuleByTagId(Integer tagId);
+
+    /**
+     * 检查会员是否符合规则
+     *
+     * @param user 会员
+     * @param rule 规则
+     * @return
+     */
+    boolean checkUserMatchRule(MtUser user, MtUserTagRule rule);
+}

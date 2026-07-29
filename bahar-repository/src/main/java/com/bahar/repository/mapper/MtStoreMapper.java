@@ -1,0 +1,30 @@
+package com.bahar.repository.mapper;
+
+import com.bahar.repository.bean.StoreDistanceBean;
+import com.bahar.repository.model.MtStore;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 店铺表 Mapper 接口
+ *
+ * Created by FSQ
+ * CopyRight https://www.bahar.cn
+ */
+public interface MtStoreMapper extends BaseMapper<MtStore> {
+
+    MtStore queryStoreByName(@Param("name") String name);
+
+    void resetDefaultStore(@Param("merchantId") Integer merchantId);
+
+    List<StoreDistanceBean> queryByDistance(@Param("merchantId") Integer merchantId, @Param("keyword") String keyword, @Param("latitude") String latitude, @Param("longitude") String longitude);
+
+    void deleteStoreByMerchant(@Param("merchantId") Integer merchantId);
+
+    List<MtStore> getMyStoreList(@Param("merchantId") Integer merchantId, @Param("storeId") Integer storeId, @Param("status") String status);
+
+    List<MtStore> getStoreListByIds(@Param("merchantId") Integer merchantId, @Param("storeIds") List<Integer> storeIds);
+
+}
