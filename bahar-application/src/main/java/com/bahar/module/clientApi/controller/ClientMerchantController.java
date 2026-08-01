@@ -1,6 +1,6 @@
 package com.bahar.module.clientApi.controller;
 
-import com.bahar.common.dto.UserInfo;
+import com.bahar.common.dto.member.UserInfo;
 import com.bahar.common.service.ConfirmLogService;
 import com.bahar.common.service.MemberService;
 import com.bahar.common.service.OrderService;
@@ -71,23 +71,23 @@ public class ClientMerchantController extends BaseController {
         // 收款额
         Date beginTime = DateUtil.getDayBegin();
         Date endTime = DateUtil.getDayEnd();
-        BigDecimal payMoney = orderService.getPayMoney(confirmInfo.getStoreId(), beginTime, endTime);
+        BigDecimal payMoney = orderService.getPayMoney(confirmInfo.getMerchantId(), confirmInfo.getStoreId(), beginTime, endTime);
         outParams.put("payMoney", payMoney);
 
         // 总会员数
-        Long userCount = memberService.getUserCount(confirmInfo.getStoreId());
+        Long userCount = memberService.getUserCount(confirmInfo.getMerchantId(), confirmInfo.getStoreId());
         outParams.put("userCount", userCount);
 
         // 今日订单数
-        BigDecimal orderCount = orderService.getOrderCount(confirmInfo.getStoreId(), beginTime, endTime);
+        BigDecimal orderCount = orderService.getOrderCount(confirmInfo.getMerchantId(), confirmInfo.getStoreId(), beginTime, endTime);
         outParams.put("orderCount", orderCount);
 
         // 核销券数
-        Long confirmCount = confirmLogService.getConfirmCount(confirmInfo.getStoreId(), beginTime, endTime);
+        Long confirmCount = confirmLogService.getConfirmCount(confirmInfo.getMerchantId(), confirmInfo.getStoreId(), beginTime, endTime);
         outParams.put("couponCount", confirmCount);
 
         // 今日活跃会员数
-        Long todayUser = memberService.getActiveUserCount(confirmInfo.getStoreId(), beginTime, endTime);
+        Long todayUser = memberService.getActiveUserCount(confirmInfo.getMerchantId(), confirmInfo.getStoreId(), beginTime, endTime);
         outParams.put("todayUser", todayUser);
 
         return getSuccessResult(outParams);

@@ -3,7 +3,7 @@ spring:
     # WebSite: https://www.bahar.cn
     url: "jdbc:mysql://localhost:3306/bahar-db?useUnicode=true&characterEncoding=UTF8&useSSL=false"
     username: "root"
-    password: "root"
+    password: "rootAdmin@0731"
     type: "com.zaxxer.hikari.HikariDataSource"
     driver-class-name: "com.mysql.cj.jdbc.Driver"
   cache:
