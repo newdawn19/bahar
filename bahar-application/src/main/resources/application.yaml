@@ -1,4 +1,17 @@
 spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+  session:
+    redis:
+      namespace: bahar:shop
   datasource:
     # WebSite: https://www.bahar.cn
     url: "jdbc:mysql://localhost:3306/bahar-db?useUnicode=true&characterEncoding=UTF8&useSSL=false"
@@ -30,12 +43,35 @@ logging:
     com:
       # 日志级别
       bahar: "info"
+# ============ 本地文件存储（替代阿里云 OSS）============
+aliyun:
+  oss:
+    # 0 = 本地磁盘存储（不上传OSS）；1 = 阿里云OSS
+    mode: "0"
+    endpoint: ""
+    accessKeyId: ""
+    accessKeySecret: ""
+    bucketName: ""
+    folder: ""
+    domain: ""
+images:
+  # 文件落盘根目录（不要以 classpath: 开头）
+  root: "D:/oss/bahar-shop/"
+  # 上传子目录
+  path: "/static/uploadFiles/"
+  upload:
+    # 对外访问前缀（返回的相对路径会自动拼在此前缀之后）
+    url: "http://127.0.0.1:8081"
+    # 单文件上限 MB
+    maxSize: "10"
 mybatis-plus:
   # mybatis配置
   mapper-locations: "classpath*:/mapper/*.xml"
   configuration:
     log-impl: "org.apache.ibatis.logging.stdout.StdOutImpl"
 server:
+  # 四套实例端口: 零售8081 / 汽车8082 / 餐饮8083 / 康养8084
+  port: 8081
   jetty:
     # header大小
     max-http-header-size: "32768"
