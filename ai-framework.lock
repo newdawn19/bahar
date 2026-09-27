@@ -1,0 +1,6 @@
+source: file:///D:/git-double/bahar/ai-framework
+ref: v0.1.0
+commit: 238db831a6c413cc71d462e1efddc2d0cd9a1f47
+install_dir: agent_bootstrap
+project_name: bahar
+knowledge_dir: agent_bootstrap/bahar_knowledge

@@ -9,3 +9,6 @@ src/main/resources/static/
 .DS_Store
 *.iml
 dump.rdb
+
+# AI Framework local control plane
+/agent_bootstrap/
