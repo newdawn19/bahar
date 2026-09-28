@@ -20,7 +20,7 @@
 - **快速测试命令：** `mvn -pl bahar-application test`（按需替换为受影响模块）
 - **模块 / 集成测试命令：** `mvn test`（main + test 均已在 JDK 11 与 JDK 17 下实测通过）
 - **Lint / 格式化命令：** 无统一配置，遵循 `governance/java-code-style.md`
-- **本地开发前置条件：** JDK 1.8+（实测 11 / 17 均可编译，IDEA 项目 SDK 为 17）；Maven 及本地仓库已就绪
+- **本地开发前置条件：** JDK 1.8+（实测 11 / 17 均可编译，IDEA 项目 SDK 为 17）；Maven 及本地仓库已就绪；**必须提供环境变量 `DB_PASSWORD`**，否则数据源密码取占位默认值 `changeme` 会导致连库失败
 
 ## Git 与交付
 
