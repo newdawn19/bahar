@@ -1,1 +1,5 @@
-dsn: "http://195a59a981104cb089d159acd2bb6b4c:8b534e04b8644ec387e642baffa855d6@47.92.111.80:9000/4"
+# Sentry DSN 已禁用。
+# 原配置硬编码作者自建 Sentry 服务器 作者自建的第三方服务器，对外演示会将异常堆栈
+# （含数据库结构与账号上下文）上报至第三方服务器，故置空。
+# 如需启用：填入自有 DSN，并在 logback-spring.xml 中配置 SentryAppender。
+dsn: ""

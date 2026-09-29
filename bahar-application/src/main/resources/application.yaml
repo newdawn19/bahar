@@ -1,8 +1,8 @@
 spring:
   redis:
-    host: 127.0.0.1
-    port: 6379
-    database: 0
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    database: ${REDIS_DB:0}
     timeout: 3000ms
     lettuce:
       pool:
@@ -14,8 +14,8 @@ spring:
       namespace: bahar:shop
   datasource:
     # WebSite: https://www.bahar.cn
-    url: "jdbc:mysql://localhost:3306/bahar-db?useUnicode=true&characterEncoding=UTF8&useSSL=false"
-    username: "root"
+    url: "jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:bahar-db}?useUnicode=true&characterEncoding=UTF8&useSSL=false"
+    username: "${DB_USER:root}"
     password: "${DB_PASSWORD:changeme}"
     type: "com.zaxxer.hikari.HikariDataSource"
     driver-class-name: "com.mysql.cj.jdbc.Driver"
@@ -56,19 +56,19 @@ aliyun:
     domain: ""
 images:
   # 文件落盘根目录（不要以 classpath: 开头）
-  root: "D:/oss/bahar-shop/"
+  root: "${IMAGE_ROOT:D:/oss/bahar-shop/}"
   # 上传子目录
   path: "/static/uploadFiles/"
   upload:
     # 对外访问前缀（返回的相对路径会自动拼在此前缀之后）
-    url: "http://127.0.0.1:8081"
+    url: "${IMAGE_BASE_URL:http://127.0.0.1:8081}"
     # 单文件上限 MB
     maxSize: "10"
 mybatis-plus:
   # mybatis配置
   mapper-locations: "classpath*:/mapper/*.xml"
   configuration:
-    log-impl: "org.apache.ibatis.logging.stdout.StdOutImpl"
+    log-impl: "${SQL_LOG_IMPL:org.apache.ibatis.logging.slf4j.Slf4jImpl}"
 server:
   # 四套实例端口: 零售8081 / 汽车8082 / 餐饮8083 / 康养8084
   port: 8081
