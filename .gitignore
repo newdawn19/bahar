@@ -12,3 +12,7 @@ dump.rdb
 
 # AI Framework local control plane
 /agent_bootstrap/
+
+# 本地运行产物（日志目录、WorkBuddy 工作目录）
+logs/
+.codebuddy/
