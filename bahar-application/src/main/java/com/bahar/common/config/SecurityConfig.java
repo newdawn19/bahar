@@ -44,6 +44,19 @@ public class SecurityConfig {
                                 "/**/*.html",
                                 "/**/*.css",
                                 "/**/*.js",
+                                // 静态资源：字体与图片。缺少这些规则时，
+                                // .woff/.ttf/.png 等会被 anyRequest().authenticated() 拦成 403，
+                                // 表现为后台图标全部不显示。
+                                "/**/*.woff",
+                                "/**/*.woff2",
+                                "/**/*.ttf",
+                                "/**/*.eot",
+                                "/**/*.svg",
+                                "/**/*.png",
+                                "/**/*.jpg",
+                                "/**/*.jpeg",
+                                "/**/*.gif",
+                                "/**/*.ico",
                                 "/profile/**"
                         ).permitAll()
                         // 业务API由自定义拦截器统一进行Token认证
