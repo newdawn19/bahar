@@ -9,7 +9,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
@@ -41,8 +40,12 @@ public class LogAop {
             String className = point.getTarget().getClass().getName();
             String methodName = point.getSignature().getName();
 
-            // 重新定义日志
-//            log = LoggerFactory.getLogger(point.getTarget().getClass());
+            // 刻意不再把 logger 换成目标类的 Logger。
+            // 旧写法 logger = LoggerFactory.getLogger(point.getTarget().getClass())
+            // 会让日志打出来的类名变成目标 Controller，可打印语句其实在本类里；
+            // 再叠上 %line，就出现"日志写着 BackendMemberController:50、
+            // 但那个文件第 50 行根本没有这行代码"的困惑。
+            // 统一用本类的 log：类名永远是 LogAop，一眼能找到出处。
             log.info("{} {}", className, methodName);
 
             // 获取方法的参数值数组

@@ -11,9 +11,10 @@
               bahar-shop / bahar-car / bahar-food / bahar-health
               （start-all.sh 用 -DAPP_NAME="${jar%.jar}" 推导，两边必须一致，
                 否则同一套服务换个启动方式就落进不同目录）
-    LOG_HOME  日志根目录。默认 ./logs（跟随进程工作目录，本地开箱可用）；
-              生产建议 /opt/logs/habar —— 在 deploy/start-all.sh 里
-              export LOG_HOME=/opt/logs/habar 就行，不用改这个文件。
+    LOG_HOME  日志根目录，四套固定写 /logs（本机落 D://logs，Linux 落 /logs）。
+              不再用 ${LOG_HOME:-./logs} 那种"跟随进程工作目录"的写法：
+              同一套服务用 IDEA 跑和用 start-all.sh 跑会落进两个不同目录，
+              出问题时很容易对着旧日志排查。要换目录就改这一行（四份一起改）。
 
   【产出】
     ${LOG_HOME}/${APP_NAME}/server.log   全量，异步写；按天 + 100MB 滚动，留 30 天 / 总 5GB
@@ -36,7 +37,7 @@
 
     <!-- ===== 可外部化变量 ===== -->
     <property name="APP_NAME" value="${APP_NAME:-bahar}"/>
-    <property name="LOG_HOME" value="${LOG_HOME:-./logs}"/>
+    <property name="LOG_HOME" value="/logs"/>
     <property name="LOG_DIR"  value="${LOG_HOME}/${APP_NAME}"/>
 
     <!-- 控制台：给人看。%-45.45logger{39} 先把包名缩写到 39 字符、再左对齐补空格；
