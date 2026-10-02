@@ -35,7 +35,7 @@
 <configuration>
 
     <!-- ===== 可外部化变量 ===== -->
-    <property name="APP_NAME" value="${APP_NAME:-bahar-shop}"/>
+    <property name="APP_NAME" value="${APP_NAME:-bahar}"/>
     <property name="LOG_HOME" value="${LOG_HOME:-./logs}"/>
     <property name="LOG_DIR"  value="${LOG_HOME}/${APP_NAME}"/>
 

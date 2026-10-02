@@ -4,11 +4,11 @@ import javassist.*;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.MethodInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -20,16 +20,13 @@ import org.springframework.stereotype.Component;
  * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
+@Slf4j
 @Component  // 声明组件
 @Aspect // 声明切面
 @ComponentScan  //组件自动扫描
 @EnableAspectJAutoProxy // spring自动切换JDK动态代理和CGLIB
 public class LogAop {
 
-    /**
-     *自定义日志
-     */
-    private Logger logger = LoggerFactory.getLogger(LogAop.class);
 
     /**
      * 打印类method的名称以及参数
@@ -45,9 +42,8 @@ public class LogAop {
             String methodName = point.getSignature().getName();
 
             // 重新定义日志
-            logger = LoggerFactory.getLogger(point.getTarget().getClass());
-            logger.info("-------------------------"+className+"------------------------------------");
-            logger.info("methodName = {}", methodName);
+//            log = LoggerFactory.getLogger(point.getTarget().getClass());
+            log.info("{} {}", className, methodName);
 
             // 获取方法的参数值数组
             Object[] methodArgs = point.getArgs();
@@ -127,8 +123,7 @@ public class LogAop {
                 buffer.append(value.toString() + " ,");
             }
         }
-        logger.info("params : " + buffer.toString());
-        logger.info("-------------------------------------------------------------");
+        log.info("params:{}", buffer.toString());
     }
 
     /**

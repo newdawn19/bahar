@@ -19,6 +19,7 @@ import com.bahar.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,7 @@ import java.util.Map;
  * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
+@Slf4j
 @Api(tags="管理端-店铺相关接口")
 @RestController
 @AllArgsConstructor
@@ -76,7 +78,7 @@ public class BackendStoreController extends BaseController {
         result.put("paginationResponse", paginationResponse);
         result.put("merchantList", merchantList);
         result.put("imagePath", settingService.getUploadBasePath());
-
+        log.info("result:{}", result);
         return getSuccessResult(result);
     }
 
