@@ -68,6 +68,13 @@ public class ArticleServiceImpl extends ServiceImpl<MtArticleMapper, MtArticle> 
      */
     @Override
     public PaginationResponse<ArticleDto> queryArticleListByPagination(ArticlePage articlePage) {
+        // 商户号 -> 商户ID 这一步要查库，必须放在 PageHelper.startPage 之前。
+        // PageHelper 的分页只对 startPage 之后**第一条**SQL 生效，如果这里先查了商户，
+        // LIMIT 会被拼到商户查询上，变成 "... limit 1 LIMIT ?" 双 LIMIT，直接 SQL 语法错误
+        // ——会员端 clientApi/article/list 带 merchantNo 请求头时就是这个现象。
+        String merchantNo = articlePage.getMerchantNo();
+        Integer mchId = merchantService.getMerchantId(merchantNo);
+
         Page<MtArticle> pageHelper = PageHelper.startPage(articlePage.getPage(), articlePage.getPageSize());
         LambdaQueryWrapper<MtArticle> lambdaQueryWrapper = Wrappers.lambdaQuery();
         lambdaQueryWrapper.ne(MtArticle::getStatus, StatusEnum.DISABLE.getKey());
@@ -84,8 +91,6 @@ public class ArticleServiceImpl extends ServiceImpl<MtArticleMapper, MtArticle> 
         if (merchantId != null && merchantId > 0) {
             lambdaQueryWrapper.eq(MtArticle::getMerchantId, merchantId);
         }
-        String merchantNo = articlePage.getMerchantNo();
-        Integer mchId = merchantService.getMerchantId(merchantNo);
         if (mchId > 0) {
             lambdaQueryWrapper.eq(MtArticle::getMerchantId, mchId);
         }
