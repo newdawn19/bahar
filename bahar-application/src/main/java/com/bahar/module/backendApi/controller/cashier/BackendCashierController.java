@@ -99,9 +99,13 @@ public class BackendCashierController extends BaseController {
     @CrossOrigin
     @PreAuthorize("@pms.hasPermission('cashier:index')")
     public ResponseObject init(HttpServletRequest request, @PathVariable("userId") Integer userId) {
-        Integer page = request.getParameter("page") == null ? Constants.PAGE_NUMBER : Integer.parseInt(request.getParameter("page"));
-        Integer pageSize = request.getParameter("pageSize") == null ? Constants.PAGE_SIZE : Integer.parseInt(request.getParameter("pageSize"));
-        Integer cateId = request.getParameter("cateId") == null ? 0 : Integer.parseInt(request.getParameter("cateId"));
+        Integer page = (request.getParameter("page") == null || request.getParameter("page").trim().isEmpty()) ? Constants.PAGE_NUMBER : Integer.parseInt(request.getParameter("page").trim());
+        Integer pageSize = (request.getParameter("pageSize") == null || request.getParameter("pageSize").trim().isEmpty()) ? Constants.PAGE_SIZE : Integer.parseInt(request.getParameter("pageSize").trim());
+        // cateId 可能为空串（前端未选分类时传 cateId=""），null 判断无法覆盖，
+        // 直接 Integer.parseInt("") 会抛 NumberFormatException("For input string: \"\"")。
+        // 同时兼容 page/pageSize 传空串的情况。
+        String cateIdParam = request.getParameter("cateId");
+        Integer cateId = (cateIdParam == null || cateIdParam.trim().isEmpty()) ? 0 : Integer.parseInt(cateIdParam.trim());
 
         AccountInfo accountInfo = TokenUtil.getAccountInfo();
         Integer storeId = accountInfo.getStoreId() == null ? 0 : accountInfo.getStoreId();
