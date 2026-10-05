@@ -145,7 +145,9 @@ public class BackendUserCouponController extends BaseController {
         if (mtUserCoupon == null || StringUtil.isEmpty(userCouponId)) {
             throw new BusinessCheckException("错误，用户卡券不存在！");
         }
-        if (!mtUserCoupon.getMerchantId().equals(accountInfo.getMerchantId())) {
+        // 平台方/未绑定商户的账号(merchantId<=0)不做商户拦截
+        if (accountInfo.getMerchantId() != null && accountInfo.getMerchantId() > 0
+                && !mtUserCoupon.getMerchantId().equals(accountInfo.getMerchantId())) {
             return getFailureResult(1004);
         }
         Integer storeId = accountInfo.getStoreId();

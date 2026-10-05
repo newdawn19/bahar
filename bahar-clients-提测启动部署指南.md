@@ -318,6 +318,7 @@ OK  pages/user/index     OK  static/tabbar/user.png / user-active.png
    6. yarn -v
 3. 执行（首次可先装依赖，若 `node_modules` 已存在可跳过）：
    ```bash
+   yarn cache clean
    yarn install          # 首次；切勿 npm install
    yarn dev:shop         # 启动「通用零售」行业（= dev）
    ```

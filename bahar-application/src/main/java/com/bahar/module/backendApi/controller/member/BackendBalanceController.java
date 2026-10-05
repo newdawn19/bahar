@@ -31,6 +31,7 @@ import com.bahar.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +44,7 @@ import java.util.*;
  * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
+@Slf4j
 @Api(tags="管理端-余额相关接口")
 @RestController
 @AllArgsConstructor
@@ -120,9 +122,23 @@ public class BackendBalanceController extends BaseController {
 
         MtBalance mtBalance = new MtBalance();
         MtUser userInfo = memberService.queryMemberById(userId);
-        if (!accountInfo.getMerchantId().equals(userInfo.getMerchantId())) {
+        // 平台方/未绑定商户的账号(merchantId<=0，收银端演示账号就是这种)没有可比较的商户，
+        // 改以会员所属商户为准，口径与 BackendCashierController.resolveStore() 的兜底一致
+        Integer merchantId = accountInfo.getMerchantId();
+        log.info("token account info:{} user info:{}", merchantId, userInfo.getMerchantId());
+        if (merchantId == null || merchantId <= 0) {
+            merchantId = userInfo.getMerchantId();
+        } else if (!merchantId.equals(userInfo.getMerchantId())) {
             return getFailureResult(201, "不同商户，无充值权限");
         }
+        // 赠送金额：收银端「确定充值」会把 giftAmount 一起传过来，后端原本没读这个字段，
+        // 界面显示「充1000送50」但会员只到账 1000，赠送被静默丢掉。
+        BigDecimal giftAmount = new BigDecimal("0");
+        Object giftObj = param.get("giftAmount");
+        if (type == 1 && giftObj != null && CommonUtil.isNumeric(giftObj.toString())) {
+            giftAmount = new BigDecimal(giftObj.toString());
+        }
+
         // 扣减余额
         if (type == 2) {
             if (userInfo.getBalance().compareTo(new BigDecimal(amount)) < 0) {
@@ -132,13 +148,25 @@ public class BackendBalanceController extends BaseController {
         } else {
             mtBalance.setAmount(new BigDecimal(amount));
         }
-        mtBalance.setMerchantId(accountInfo.getMerchantId());
+        mtBalance.setMerchantId(merchantId);
         mtBalance.setStoreId(accountInfo.getStoreId());
         mtBalance.setDescription(remark);
         mtBalance.setUserId(userId);
         mtBalance.setOperator(accountInfo.getAccountName());
 
         balanceService.addBalance(mtBalance, true);
+
+        // 赠送金额单独记一条，余额明细里能看出本金/赠送各多少
+        if (giftAmount.compareTo(BigDecimal.ZERO) > 0) {
+            MtBalance giftBalance = new MtBalance();
+            giftBalance.setMerchantId(merchantId);
+            giftBalance.setStoreId(accountInfo.getStoreId());
+            giftBalance.setAmount(giftAmount);
+            giftBalance.setDescription("充值赠送");
+            giftBalance.setUserId(userId);
+            giftBalance.setOperator(accountInfo.getAccountName());
+            balanceService.addBalance(giftBalance, true);
+        }
         return getSuccessResult(true);
     }
 
@@ -179,7 +207,12 @@ public class BackendBalanceController extends BaseController {
         if (userInfo == null) {
             return getFailureResult(201, "会员不存在");
         }
-        if (accountInfo.getMerchantId() == null || !accountInfo.getMerchantId().equals(userInfo.getMerchantId())) {
+        // 平台方/未绑定商户的账号(merchantId<=0，收银端演示账号就是这种)没有可比较的商户，
+        // 改以会员所属商户为准，口径与 BackendCashierController.resolveStore() 的兜底一致
+        Integer merchantId = accountInfo.getMerchantId();
+        if (merchantId == null || merchantId <= 0) {
+            merchantId = userInfo.getMerchantId();
+        } else if (!merchantId.equals(userInfo.getMerchantId())) {
             return getFailureResult(201, "不同商户，无充值权限");
         }
 
@@ -191,7 +224,7 @@ public class BackendBalanceController extends BaseController {
             rechargeAmount = custom;
             ruleParam = custom.toPlainString() + "_0";
         } else {
-            MtSetting mtSetting = settingService.querySettingByName(accountInfo.getMerchantId(), SettingTypeEnum.BALANCE.getKey(), BalanceSettingEnum.RECHARGE_RULE.getKey());
+            MtSetting mtSetting = settingService.querySettingByName(merchantId, SettingTypeEnum.BALANCE.getKey(), BalanceSettingEnum.RECHARGE_RULE.getKey());
             if (mtSetting != null && mtSetting.getStatus() != null
                     && mtSetting.getStatus().equals(StatusEnum.ENABLED.getKey())
                     && StringUtil.isNotEmpty(mtSetting.getValue())) {
@@ -226,7 +259,7 @@ public class BackendBalanceController extends BaseController {
         orderDto.setOrderMode("");
         orderDto.setCouponId(0);
         orderDto.setPlatform("cashier");
-        orderDto.setMerchantId(accountInfo.getMerchantId());
+        orderDto.setMerchantId(merchantId);
 
         MtOrder orderInfo = orderService.saveOrder(orderDto);
 
