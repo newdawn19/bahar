@@ -108,24 +108,8 @@ public class BackendCashierController extends BaseController {
         Integer cateId = (cateIdParam == null || cateIdParam.trim().isEmpty()) ? 0 : Integer.parseInt(cateIdParam.trim());
 
         AccountInfo accountInfo = TokenUtil.getAccountInfo();
-        Integer storeId = accountInfo.getStoreId() == null ? 0 : accountInfo.getStoreId();
-        MtStore storeInfo = null;
-        if (storeId == null || storeId < 1) {
-            MtMerchant mtMerchant = merchantService.queryMerchantById(accountInfo.getMerchantId());
-            if (mtMerchant != null) {
-                storeInfo = storeService.getDefaultStore(mtMerchant.getNo());
-            }
-        } else {
-            storeInfo = storeService.queryStoreById(storeId);
-        }
-
-        if (storeInfo == null && (accountInfo.getMerchantId() == null || accountInfo.getMerchantId() <= 0)) {
-            storeInfo = storeService.getDefaultStore(null);
-        }
-
-        if (storeInfo != null) {
-            storeId = storeInfo.getId();
-        }
+        MtStore storeInfo = resolveStore(accountInfo);
+        Integer storeId = resolveStoreId(accountInfo, storeInfo);
         MtUser memberInfo = null;
         if (userId != null && userId > 0) {
             memberInfo = memberService.queryMemberById(userId);
@@ -159,20 +143,55 @@ public class BackendCashierController extends BaseController {
         String keyword =  param.get("keyword") == null ? "" : param.get("keyword").toString();
 
         AccountInfo accountInfo = TokenUtil.getAccountInfo();
-        Integer storeId = accountInfo.getStoreId();
-
-        if (storeId == null || storeId <= 0) {
-            MtMerchant mtMerchant = merchantService.queryMerchantById(accountInfo.getMerchantId());
-            if (mtMerchant != null) {
-                MtStore storeInfo = storeService.getDefaultStore(mtMerchant.getNo());
-                if (storeInfo != null) {
-                    storeId = storeInfo.getId();
-                }
-            }
-        }
+        Integer storeId = resolveStoreId(accountInfo, resolveStore(accountInfo));
 
         Map<String, Object> goodsData = goodsService.getStoreGoodsList(storeId, keyword, "",0,1, 100);
         return getSuccessResult(goodsData.get("goodsList"));
+    }
+
+    /**
+     * 解析当前账号所属店铺。
+     *
+     * 解析顺序（init 与 searchGoods 必须共用这一套逻辑，否则两处行为漂移会导致
+     * 一边能查到商品、另一边查不到）：
+     * 1. accountInfo.storeId 有效时，直接查询该店铺；
+     * 2. 否则按 merchantId 查商户，再取该商户的默认店铺；
+     * 3. 兜底：merchantId 为空或小于等于 0 时，取系统默认店铺。
+     *
+     * @param accountInfo 当前登录账号信息
+     * @return 店铺对象，解析不到时返回 null
+     */
+    private MtStore resolveStore(AccountInfo accountInfo) {
+        Integer storeId = (accountInfo.getStoreId() == null || accountInfo.getStoreId() < 1) ? 0 : accountInfo.getStoreId();
+        MtStore storeInfo = null;
+        if (storeId == null || storeId < 1) {
+            MtMerchant mtMerchant = merchantService.queryMerchantById(accountInfo.getMerchantId());
+            if (mtMerchant != null) {
+                storeInfo = storeService.getDefaultStore(mtMerchant.getNo());
+            }
+        } else {
+            storeInfo = storeService.queryStoreById(storeId);
+        }
+
+        if (storeInfo == null && (accountInfo.getMerchantId() == null || accountInfo.getMerchantId() <= 0)) {
+            storeInfo = storeService.getDefaultStore(null);
+        }
+
+        return storeInfo;
+    }
+
+    /**
+     * 解析当前账号所属店铺ID。
+     *
+     * @param accountInfo 当前登录账号信息
+     * @param storeInfo   已解析出的店铺对象，可为 null
+     * @return 店铺ID；店铺解析不到时回退为账号自带的 storeId（无效则为 0）
+     */
+    private Integer resolveStoreId(AccountInfo accountInfo, MtStore storeInfo) {
+        if (storeInfo != null) {
+            return storeInfo.getId();
+        }
+        return (accountInfo.getStoreId() == null || accountInfo.getStoreId() < 1) ? 0 : accountInfo.getStoreId();
     }
 
     /**

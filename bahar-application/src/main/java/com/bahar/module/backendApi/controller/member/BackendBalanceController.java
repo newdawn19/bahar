@@ -1,4 +1,10 @@
 package com.bahar.module.backendApi.controller.member;
+import com.bahar.common.dto.order.OrderDto;
+import com.bahar.common.enums.OrderStatusEnum;
+import com.bahar.common.enums.OrderTypeEnum;
+import com.bahar.common.enums.PayStatusEnum;
+import com.bahar.common.service.OrderService;
+import com.bahar.repository.model.MtOrder;
 
 import com.bahar.common.dto.recharge.RechargeRuleDto;
 import com.bahar.common.dto.system.AccountInfo;
@@ -62,6 +68,11 @@ public class BackendBalanceController extends BaseController {
      * 卡券服务接口
      * */
     private CouponService couponService;
+
+    /**
+     * 订单服务接口
+     * */
+    private OrderService orderService;
 
     /**
      * 余额明细列表查询
@@ -129,6 +140,101 @@ public class BackendBalanceController extends BaseController {
 
         balanceService.addBalance(mtBalance, true);
         return getSuccessResult(true);
+    }
+
+    /**
+     * 生成充值订单（收银端扫码收款链路的第一步）
+     *
+     * 前端流程：createRechargeOrder -> clientApi/pay/doPay?orderId=&authCode=&payType=MICROPAY
+     * 支付成功后 paymentCallback 会自动给会员入账并加积分。
+     *
+     * 注意：不复用 OrderService.doRecharge(request, param)，因为它是会员端接口，
+     * 依赖 request 头里的 merchantNo；收银端没有该头，
+     * merchantService.getMerchantId("") 会返回 0，导致订单 merchantId=0。
+     */
+    @ApiOperation(value = "生成充值订单")
+    @RequestMapping(value = "/createRechargeOrder", method = RequestMethod.POST)
+    @CrossOrigin
+    @PreAuthorize("@pms.hasPermission('balance:modify')")
+    public ResponseObject createRechargeOrder(@RequestBody Map<String, Object> param) throws BusinessCheckException {
+        String amount = param.get("amount") == null ? "0" : param.get("amount").toString();
+        String customAmount = param.get("customAmount") == null ? "0" : param.get("customAmount").toString();
+        String remark = param.get("remark") == null ? "会员充值" : param.get("remark").toString();
+        Integer userId = param.get("userId") == null ? 0 : Integer.parseInt(param.get("userId").toString());
+        AccountInfo accountInfo = TokenUtil.getAccountInfo();
+
+        if (!CommonUtil.isNumeric(amount)) {
+            return getFailureResult(201, "充值金额必须是数字");
+        }
+        if (userId < 1) {
+            return getFailureResult(201, "充值会员信息不能为空");
+        }
+
+        BigDecimal rechargeAmount = new BigDecimal(amount);
+        if (rechargeAmount.compareTo(new BigDecimal("0")) <= 0) {
+            return getFailureResult(201, "请确认充值金额");
+        }
+
+        MtUser userInfo = memberService.queryMemberById(userId);
+        if (userInfo == null) {
+            return getFailureResult(201, "会员不存在");
+        }
+        if (accountInfo.getMerchantId() == null || !accountInfo.getMerchantId().equals(userInfo.getMerchantId())) {
+            return getFailureResult(201, "不同商户，无充值权限");
+        }
+
+        // 充值赠送规则，与会员端充值一致，取自 mt_setting 的 RECHARGE_RULE
+        String ruleParam = rechargeAmount.toPlainString() + "_0";
+        BigDecimal custom = new BigDecimal(CommonUtil.isNumeric(customAmount) ? customAmount : "0");
+        if (custom.compareTo(new BigDecimal("0")) > 0) {
+            // 自定义金额不参与赠送
+            rechargeAmount = custom;
+            ruleParam = custom.toPlainString() + "_0";
+        } else {
+            MtSetting mtSetting = settingService.querySettingByName(accountInfo.getMerchantId(), SettingTypeEnum.BALANCE.getKey(), BalanceSettingEnum.RECHARGE_RULE.getKey());
+            if (mtSetting != null && mtSetting.getStatus() != null
+                    && mtSetting.getStatus().equals(StatusEnum.ENABLED.getKey())
+                    && StringUtil.isNotEmpty(mtSetting.getValue())) {
+                String rules[] = mtSetting.getValue().split(",");
+                for (String rule : rules) {
+                    String amountArr[] = rule.split("_");
+                    if (amountArr.length >= 2) {
+                        try {
+                            if (new BigDecimal(amountArr[0]).compareTo(rechargeAmount) == 0) {
+                                ruleParam = rule;
+                                break;
+                            }
+                        } catch (NumberFormatException e) {
+                            // 规则配置非法，跳过
+                        }
+                    }
+                }
+            }
+        }
+
+        OrderDto orderDto = new OrderDto();
+        orderDto.setType(OrderTypeEnum.RECHARGE.getKey());
+        orderDto.setUserId(userId);
+        orderDto.setStoreId(accountInfo.getStoreId());
+        orderDto.setAmount(rechargeAmount);
+        orderDto.setUsePoint(0);
+        orderDto.setRemark(remark);
+        orderDto.setParam(ruleParam);
+        orderDto.setStatus(OrderStatusEnum.CREATED.getKey());
+        orderDto.setPayStatus(PayStatusEnum.WAIT.getKey());
+        orderDto.setPointAmount(new BigDecimal("0"));
+        orderDto.setOrderMode("");
+        orderDto.setCouponId(0);
+        orderDto.setPlatform("cashier");
+        orderDto.setMerchantId(accountInfo.getMerchantId());
+
+        MtOrder orderInfo = orderService.saveOrder(orderDto);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("orderId", orderInfo.getId());
+        result.put("orderSn", orderInfo.getOrderSn());
+        result.put("payAmount", orderInfo.getAmount());
+        return getSuccessResult(result);
     }
 
     /**
