@@ -16,3 +16,6 @@ dump.rdb
 # 本地运行产物（日志目录、WorkBuddy 工作目录）
 logs/
 .codebuddy/
+
+# IDE 本地配置（dataSources.xml 等可能含数据库连接口令，禁止入库）
+.idea/
