@@ -233,6 +233,7 @@ function buildTemplate(cfg) {
       attrs += (idx === flexIndex ? ' min-width="' : ' width="') + c.width + '"';
     }
     if (c.prop) { attrs += ' prop="' + c.prop + '"'; }
+    if (c.align) { attrs += ' align="' + c.align + '"'; }
     if (c.type === 'image') {
       // 之前无 prefix 时会拼出 ":src=' + s.row.logo'" —— 表达式以 + 开头，渲染成 NaN。
       // 现在没 prefix 就直接绑定字段；有 prefix 当字符串前缀拼接。
@@ -256,6 +257,14 @@ function buildTemplate(cfg) {
       return '<el-table-column ' + attrs + '><template slot-scope="s">' +
         '<el-tag :type="(' + typeExpr + ')">{{ ' + valueExpr + ' }}</el-tag>' +
         '</template></el-table-column>';
+    }
+    if (c.type === 'expr') {
+      // 关联字段（员工所属门店/商户、绑定的会员号等）不都在行对象顶层，
+      // 需要表达式取值。写法同 tag 列：模块里写 row.xxx，这里统一补成 s.row.xxx。
+      var exprStr = String(c.expr || '')
+        .replace(/(^|[^.\w$])row\./g, '$1s.row.');
+      return '<el-table-column ' + attrs + '><template slot-scope="s">' +
+        '{{ ' + exprStr + ' }}</template></el-table-column>';
     }
     if (c.type === 'dict') {
       return '<el-table-column ' + attrs + '><template slot-scope="s">{{ labelOf(\'' + c.dict + '\', s.row.' + c.prop + ') }}</template></el-table-column>';
@@ -329,7 +338,8 @@ function buildTemplate(cfg) {
     } else if (f.type === 'readonly') {
       item += '<el-input v-model="form.' + f.prop + '" readonly/>';
     } else {
-      item += '<el-input v-model="form.' + f.prop + '" placeholder="请输入' + f.label + '"/>';
+      var ph = f.placeholder || ('请输入' + f.label);
+      item += '<el-input v-model="form.' + f.prop + '" placeholder="' + ph + '"/>';
     }
     return item + '</el-form-item>';
   }).join('\n');
