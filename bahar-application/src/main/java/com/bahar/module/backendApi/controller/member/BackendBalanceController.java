@@ -250,6 +250,9 @@ public class BackendBalanceController extends BaseController {
         orderDto.setUserId(userId);
         orderDto.setStoreId(accountInfo.getStoreId());
         orderDto.setAmount(rechargeAmount);
+        // 必须同时设置 payAmount：微信/支付宝回调会拿回调金额与 payAmount 做等值比对，
+        // 只设 amount 会让 pay_amount 落库为 0，回调时金额校验失败 -> 用户付了钱但不入账。
+        orderDto.setPayAmount(rechargeAmount);
         orderDto.setUsePoint(0);
         orderDto.setRemark(remark);
         orderDto.setParam(ruleParam);
