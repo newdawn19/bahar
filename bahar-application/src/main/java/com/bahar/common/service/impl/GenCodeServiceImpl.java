@@ -38,7 +38,6 @@ import java.util.List;
 /**
  * 代码生成服务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

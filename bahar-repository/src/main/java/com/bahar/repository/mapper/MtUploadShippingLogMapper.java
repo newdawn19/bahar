@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * 微信小程序上传发货信息 Mapper 接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface MtUploadShippingLogMapper extends BaseMapper<MtUploadShippingLog> {

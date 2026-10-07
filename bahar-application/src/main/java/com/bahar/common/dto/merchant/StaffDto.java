@@ -10,7 +10,6 @@ import java.util.Date;
 /**
  * 员工实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  * */
 @Data

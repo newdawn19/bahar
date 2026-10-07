@@ -8,7 +8,6 @@ import lombok.Data;
 /**
  * 店铺距离对象
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

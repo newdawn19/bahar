@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 后台日志管理控制器
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-日志相关接口")

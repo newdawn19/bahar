@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * 芯烨云打印相关接口封装类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class PrinterUtil {

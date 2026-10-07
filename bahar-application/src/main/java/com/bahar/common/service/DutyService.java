@@ -13,7 +13,6 @@ import java.util.List;
 /**
  * 角色服务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface DutyService extends IService<TDuty> {

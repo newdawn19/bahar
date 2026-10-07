@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 /**
  * 会员排行DTO
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

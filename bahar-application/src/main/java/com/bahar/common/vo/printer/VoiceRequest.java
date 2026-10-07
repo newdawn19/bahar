@@ -3,7 +3,6 @@ package com.bahar.common.vo.printer;
 /**
  * 云喇叭播放语音请求参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class VoiceRequest extends RestRequest {

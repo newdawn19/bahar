@@ -3,7 +3,6 @@ package com.bahar.common.enums;
 /**
  * 后台角色枚举
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum AdminRoleEnum {

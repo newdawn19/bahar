@@ -6,7 +6,6 @@ import java.io.Serializable;
 
 /**
  * 转增记录列表请求参数
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 /**
  * 会员标签规则服务实现类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Slf4j

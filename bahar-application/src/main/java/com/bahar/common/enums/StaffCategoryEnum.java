@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 /**
  * 员工类别枚举
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum StaffCategoryEnum {

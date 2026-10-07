@@ -3,7 +3,6 @@ package com.bahar.framework.web;
 /**
  * 返回数据结构
  *
- * Created by FSQ
  *
  * CopyRight https://www.bahar.cn
  */

@@ -3,7 +3,6 @@ package com.bahar.common.enums;
 /**
  * 会员行为枚举
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum UserActionEnum {

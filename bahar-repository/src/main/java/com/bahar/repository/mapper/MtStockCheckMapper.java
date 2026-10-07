@@ -6,7 +6,6 @@ import com.bahar.repository.model.MtStockCheck;
 /**
  * 库存盘点记录表 Mapper 接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface MtStockCheckMapper extends BaseMapper<MtStockCheck> {

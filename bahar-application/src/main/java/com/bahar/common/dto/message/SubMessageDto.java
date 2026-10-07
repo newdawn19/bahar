@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * 小程序订阅消息dto
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

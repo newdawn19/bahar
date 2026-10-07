@@ -28,7 +28,6 @@ import java.util.Map;
 /**
  * 商户端-商品分类管理controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="商户端-商品分类管理相关接口")

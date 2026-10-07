@@ -14,7 +14,6 @@ import java.util.Date;
 /**
  * 会员余额实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

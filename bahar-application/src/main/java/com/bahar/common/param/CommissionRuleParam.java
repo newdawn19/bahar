@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * 分销提成规则请求参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

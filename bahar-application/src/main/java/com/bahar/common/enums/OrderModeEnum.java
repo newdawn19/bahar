@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 /**
  * 订单模式
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum OrderModeEnum {

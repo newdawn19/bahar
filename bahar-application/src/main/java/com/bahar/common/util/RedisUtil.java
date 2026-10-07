@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * redis 缓存工具
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Slf4j

@@ -3,7 +3,6 @@ package com.bahar.common.enums;
 /**
  * 标签规则时间范围枚举
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum TagRuleTimeRangeEnum {

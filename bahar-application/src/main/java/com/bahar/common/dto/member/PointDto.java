@@ -10,7 +10,6 @@ import java.util.Date;
 /**
  * 积分记录实体类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

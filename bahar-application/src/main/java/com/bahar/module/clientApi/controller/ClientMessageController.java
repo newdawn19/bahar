@@ -29,7 +29,6 @@ import java.util.Map;
 /**
  * 消息相关controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-消息相关接口")

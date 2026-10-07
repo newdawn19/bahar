@@ -12,7 +12,6 @@ import lombok.Data;
 /**
  * 短信发送记录表
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 /**
  * 商户实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

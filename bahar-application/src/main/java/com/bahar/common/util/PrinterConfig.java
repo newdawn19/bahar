@@ -5,7 +5,6 @@ import com.bahar.common.vo.printer.RestRequest;
 /**
  * 云打印公共配置类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class PrinterConfig {

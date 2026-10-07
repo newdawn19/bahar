@@ -9,7 +9,6 @@ import java.util.Date;
 /**
  * 会员标签DTO
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 /**
  * 菜单管理接口实现类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

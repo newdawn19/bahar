@@ -13,7 +13,6 @@ import lombok.Data;
 /**
  * 优惠券组
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

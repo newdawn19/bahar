@@ -8,7 +8,6 @@ import lombok.Data;
 /**
  * 卡券数量对象
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

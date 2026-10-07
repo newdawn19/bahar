@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 全局异常处理器
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @RestControllerAdvice

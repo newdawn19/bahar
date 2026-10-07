@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 /**
  * 卡券分组业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface CouponGroupService extends IService<MtCouponGroup> {

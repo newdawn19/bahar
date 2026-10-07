@@ -3,7 +3,6 @@ package com.bahar.common.enums;
 /**
  * 会员配置项枚举
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum UserSettingEnum {

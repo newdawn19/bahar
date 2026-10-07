@@ -37,7 +37,6 @@ import java.util.*;
 /**
  * 转赠业务实现类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

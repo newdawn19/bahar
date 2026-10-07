@@ -3,7 +3,6 @@ package com.bahar.common.vo.printer;
 /**
  * 查询订单统计请求参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class QueryOrderStatisRequest extends RestRequest {

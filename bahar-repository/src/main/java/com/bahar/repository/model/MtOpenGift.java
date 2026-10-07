@@ -12,7 +12,6 @@ import lombok.Data;
 /**
  * 会员开卡赠礼
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

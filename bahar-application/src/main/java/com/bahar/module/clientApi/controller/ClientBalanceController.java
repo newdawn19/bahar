@@ -35,7 +35,6 @@ import java.util.Map;
 /**
  * 余额接口controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-余额相关接口")

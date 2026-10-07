@@ -3,7 +3,6 @@ package com.bahar.common.enums;
 /**
  * 卡券适用商品
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum ApplyGoodsEnum {

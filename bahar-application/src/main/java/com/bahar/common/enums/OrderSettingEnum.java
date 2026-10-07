@@ -3,7 +3,6 @@ package com.bahar.common.enums;
 /**
  * 交易配置项枚举
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum OrderSettingEnum {

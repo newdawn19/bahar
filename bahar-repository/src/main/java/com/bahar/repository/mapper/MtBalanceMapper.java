@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * 余额变化表 Mapper 接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface MtBalanceMapper extends BaseMapper<MtBalance> {

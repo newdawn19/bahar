@@ -9,7 +9,6 @@ import java.util.Map;
 /**
  * 购物车业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface CartService extends IService<MtCart> {

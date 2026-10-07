@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 /**
  * 升级会员等级条件枚举
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum UserGradeCatchTypeEnum {

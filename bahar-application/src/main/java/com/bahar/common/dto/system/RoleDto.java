@@ -6,7 +6,6 @@ import lombok.Data;
 /**
  * 角色信息实体类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

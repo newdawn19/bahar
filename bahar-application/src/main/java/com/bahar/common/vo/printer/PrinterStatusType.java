@@ -3,7 +3,6 @@ package com.bahar.common.vo.printer;
 /**
  * 打印机状态
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum PrinterStatusType {

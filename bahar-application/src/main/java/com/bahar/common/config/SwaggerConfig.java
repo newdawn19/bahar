@@ -13,7 +13,6 @@ import springfox.documentation.spring.web.plugins.Docket;
 /**
  * Swagger接口文档
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Configuration
@@ -36,7 +35,7 @@ public class SwaggerConfig {
          .title("bahar会员营销系统接口文档")
          .description("bahar会员营销系统接口文档，“/clientApi”目录接口为会员端相关接口，“/backendApi”目录接口为后台管理端相关接口。")
          .termsOfServiceUrl("https://www.bahar.cn/")
-         .contact(new Contact("海南延禾信息技术有限公司","https://www.bahar.cn/", "fushengqian@qq.com"))
+         .contact(new Contact("bahar","https://www.bahar.cn/", "support@bahar.cn"))
          .version("1.0")
          .build();
      }

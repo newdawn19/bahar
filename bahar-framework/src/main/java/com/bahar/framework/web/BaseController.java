@@ -6,7 +6,6 @@ import com.bahar.utils.PropertiesUtil;
 /**
  * 控制器基类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class BaseController {

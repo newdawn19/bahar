@@ -17,7 +17,6 @@ import java.util.Date;
 /**
  * 登录Token服务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class TokenUtil {

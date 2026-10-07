@@ -7,7 +7,6 @@ import java.io.Serializable;
 /**
  * 时间Dto
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

@@ -12,7 +12,6 @@ import java.util.Map;
 /**
  * http请求工具
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class HttpUtil {

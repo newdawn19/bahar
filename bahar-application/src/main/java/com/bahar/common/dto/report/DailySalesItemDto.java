@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 /**
  * 日销售实体类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

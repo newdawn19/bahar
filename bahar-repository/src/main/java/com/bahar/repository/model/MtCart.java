@@ -12,7 +12,6 @@ import lombok.Data;
 /**
  * 购物车
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

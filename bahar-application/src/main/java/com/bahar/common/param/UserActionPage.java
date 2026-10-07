@@ -7,7 +7,6 @@ import java.io.Serializable;
 /**
  * 会员行为分页查询参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

@@ -55,7 +55,6 @@ import java.net.URLConnection;
 /**
  * 店铺管理业务实现类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

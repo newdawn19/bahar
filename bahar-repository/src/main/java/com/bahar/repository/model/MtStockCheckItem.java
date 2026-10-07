@@ -12,7 +12,6 @@ import lombok.Data;
 /**
  * 库存盘点明细表
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

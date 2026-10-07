@@ -25,7 +25,6 @@ import java.util.Map;
 /**
  * 后台会员标签规则管理控制器
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags = "后台-会员标签规则管理")

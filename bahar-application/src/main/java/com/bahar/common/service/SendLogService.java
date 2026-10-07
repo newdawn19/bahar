@@ -9,7 +9,6 @@ import com.bahar.repository.model.MtSendLog;
 /**
  * 发券记录业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface SendLogService extends IService<MtSendLog> {

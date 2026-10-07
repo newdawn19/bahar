@@ -3,7 +3,6 @@ package com.bahar.common.enums;
 /**
  * 平台类型枚举
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum PlatformTypeEnum {

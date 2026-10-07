@@ -9,7 +9,6 @@ import java.util.Date;
 /**
  * 发放卡券记录请求DTO
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

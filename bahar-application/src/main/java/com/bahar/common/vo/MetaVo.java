@@ -3,7 +3,6 @@ package com.bahar.common.vo;
 /**
  * 路由显示信息
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class MetaVo {

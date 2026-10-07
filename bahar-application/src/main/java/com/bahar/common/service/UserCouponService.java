@@ -15,7 +15,6 @@ import java.util.Map;
 /**
  * 会员卡券业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface UserCouponService extends IService<MtUserCoupon> {

@@ -6,7 +6,6 @@ import org.apache.velocity.app.Velocity;
 /**
  * 模板引擎初始化
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class VelocityInitializer {

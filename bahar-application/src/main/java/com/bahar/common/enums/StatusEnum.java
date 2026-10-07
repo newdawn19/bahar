@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 /**
  * 通用状态枚举
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum StatusEnum {

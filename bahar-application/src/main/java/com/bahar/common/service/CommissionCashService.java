@@ -14,7 +14,6 @@ import com.bahar.repository.model.MtCommissionCash;
 /**
  * 分销提成记录业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface CommissionCashService extends IService<MtCommissionCash> {

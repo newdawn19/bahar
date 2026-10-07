@@ -10,7 +10,6 @@ import com.bahar.repository.model.MtArticle;
 /**
  * 文章业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface ArticleService extends IService<MtArticle> {

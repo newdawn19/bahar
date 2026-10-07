@@ -47,7 +47,6 @@ import static com.bahar.common.util.XlsUtil.objectConvertToString;
 /**
  * 会员卡券统计管理controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-会员卡券统计相关接口")

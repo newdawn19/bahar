@@ -30,7 +30,6 @@ import java.util.*;
 /**
  * 卡券到期处理定时任务
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @EnableScheduling

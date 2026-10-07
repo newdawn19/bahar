@@ -42,7 +42,6 @@ import java.util.*;
 /**
  * 打印机服务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

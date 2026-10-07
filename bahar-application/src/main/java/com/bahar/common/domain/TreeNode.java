@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * 树状结构节点实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

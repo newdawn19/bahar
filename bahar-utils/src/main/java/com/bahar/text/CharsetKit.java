@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 /**
  * 字符集工具类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class CharsetKit {

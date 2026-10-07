@@ -40,7 +40,6 @@ import static com.bahar.common.util.XlsUtil.objectConvertToString;
 /**
  * 会员管理类controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-会员相关接口")

@@ -10,7 +10,6 @@ import java.io.Serializable;
 /**
  * 订单，需要上传物流信息的订单Bean
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

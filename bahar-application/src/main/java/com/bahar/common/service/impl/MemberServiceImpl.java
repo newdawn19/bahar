@@ -44,7 +44,6 @@ import java.util.*;
 /**
  * 会员业务接口实现类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 /**
  * 分佣提成类型
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum CommissionTypeEnum {

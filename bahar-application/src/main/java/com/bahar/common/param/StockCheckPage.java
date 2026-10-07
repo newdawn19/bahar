@@ -8,7 +8,6 @@ import java.util.Date;
 /**
  * 库存盘点分页查询参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

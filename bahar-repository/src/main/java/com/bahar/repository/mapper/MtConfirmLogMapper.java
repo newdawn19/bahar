@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * 核销记录表 Mapper 接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface MtConfirmLogMapper extends BaseMapper<MtConfirmLog> {

@@ -30,7 +30,6 @@ import java.util.Map;
 /**
  * 售后类controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-售后相关接口")

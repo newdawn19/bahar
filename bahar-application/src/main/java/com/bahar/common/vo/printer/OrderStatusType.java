@@ -3,7 +3,6 @@ package com.bahar.common.vo.printer;
 /**
  * 订单状态
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum OrderStatusType {

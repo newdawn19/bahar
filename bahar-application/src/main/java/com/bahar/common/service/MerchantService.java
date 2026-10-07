@@ -16,7 +16,6 @@ import java.util.Map;
 /**
  * 商户业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface MerchantService extends IService<MtMerchant> {

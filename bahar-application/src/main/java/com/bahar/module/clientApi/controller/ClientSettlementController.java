@@ -18,7 +18,6 @@ import java.util.Map;
 /**
  * 结算中心接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-订单结算相关接口")

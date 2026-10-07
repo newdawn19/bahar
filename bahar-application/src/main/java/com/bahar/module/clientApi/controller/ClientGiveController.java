@@ -26,7 +26,6 @@ import java.util.Map;
 /**
  * 卡券转赠controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-卡券转赠相关接口")

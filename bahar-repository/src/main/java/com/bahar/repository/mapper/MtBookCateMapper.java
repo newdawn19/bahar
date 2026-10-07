@@ -6,7 +6,6 @@ import com.bahar.repository.model.MtBookCate;
 /**
  *  预约分类 Mapper 接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface MtBookCateMapper extends BaseMapper<MtBookCate> {

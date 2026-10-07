@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * 角色菜单 Mapper 接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface TDutySourceMapper extends BaseMapper<TDutySource> {

@@ -8,7 +8,6 @@ import lombok.Data;
 /**
  * 微信小程序上传发货信息对象
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

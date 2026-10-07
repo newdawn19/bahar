@@ -7,7 +7,6 @@ import java.io.Serializable;
 /**
  * 商品列表请求参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

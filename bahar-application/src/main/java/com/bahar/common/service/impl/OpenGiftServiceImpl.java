@@ -38,7 +38,6 @@ import java.util.*;
 /**
  * 开卡赠礼接口实现类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

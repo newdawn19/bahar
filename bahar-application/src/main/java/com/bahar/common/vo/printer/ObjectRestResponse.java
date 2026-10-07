@@ -3,7 +3,6 @@ package com.bahar.common.vo.printer;
 /**
  * 返回公共参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class ObjectRestResponse<T> {

@@ -12,7 +12,6 @@ import lombok.Data;
 /**
  * 店铺员工表
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

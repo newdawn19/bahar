@@ -10,7 +10,6 @@ import com.bahar.repository.model.MtUser;
 /**
  * 分销提成关系业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface CommissionRelationService extends IService<MtCommissionRelation> {

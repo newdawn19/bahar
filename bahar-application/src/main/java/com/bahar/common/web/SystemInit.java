@@ -16,7 +16,6 @@ import java.util.List;
 /**
  * 系统初始化
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

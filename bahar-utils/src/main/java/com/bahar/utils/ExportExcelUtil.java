@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 /**
  * 利用开源组件POI3.0.2动态导出EXCEL文档 转载时请保留以下信息，注明出处！
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  * @param <T>
  *            应用泛型，代表任意一个符合javabean风格的类

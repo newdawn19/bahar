@@ -30,7 +30,6 @@ import java.util.*;
 /**
  * 小程序订阅消息管理类controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-小程序订阅消息相关接口")

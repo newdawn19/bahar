@@ -28,7 +28,6 @@ import java.util.*;
 /**
  * 商户端-商品管理controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="商户端-商品管理相关接口")

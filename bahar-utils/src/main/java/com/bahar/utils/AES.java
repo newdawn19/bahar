@@ -14,7 +14,6 @@ import java.util.Arrays;
 /**
  * 加密算法
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class AES {

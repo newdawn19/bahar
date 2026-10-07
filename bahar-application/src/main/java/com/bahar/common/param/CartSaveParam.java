@@ -6,7 +6,6 @@ import java.io.Serializable;
 
 /**
  * 保存购物车请求参数
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

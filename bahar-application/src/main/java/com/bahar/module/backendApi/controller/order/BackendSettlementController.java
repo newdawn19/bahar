@@ -34,7 +34,6 @@ import java.util.Map;
 /**
  * 商户结算管理controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-商户结算相关接口")

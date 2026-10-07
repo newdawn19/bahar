@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * 店铺表 Mapper 接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface MtStoreMapper extends BaseMapper<MtStore> {

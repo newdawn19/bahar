@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Component

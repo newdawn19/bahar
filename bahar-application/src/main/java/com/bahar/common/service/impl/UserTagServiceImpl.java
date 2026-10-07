@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 /**
  * 会员标签服务实现类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

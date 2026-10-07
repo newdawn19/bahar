@@ -12,7 +12,6 @@ import java.util.Calendar;
 /**
  * 时间工具类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class TimeUtil {

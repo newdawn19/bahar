@@ -41,7 +41,6 @@ import java.util.*;
 /**
  * 余额管理controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Slf4j

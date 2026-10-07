@@ -9,7 +9,6 @@ import lombok.Data;
 /**
  * 会员排行对象
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

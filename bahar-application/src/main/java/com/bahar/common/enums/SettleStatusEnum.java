@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 /**
  * 订单结算状态
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum SettleStatusEnum {

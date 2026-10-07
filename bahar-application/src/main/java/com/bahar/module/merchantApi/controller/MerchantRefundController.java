@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 售后类controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="商户端-售后管理相关接口")

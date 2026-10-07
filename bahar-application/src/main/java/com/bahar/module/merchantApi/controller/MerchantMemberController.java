@@ -33,7 +33,6 @@ import java.util.Map;
 /**
  * 会员管理类controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="商户端-会员管理相关接口")

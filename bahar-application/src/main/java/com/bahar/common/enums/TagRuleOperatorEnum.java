@@ -3,7 +3,6 @@ package com.bahar.common.enums;
 /**
  * 标签规则操作符枚举
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum TagRuleOperatorEnum {

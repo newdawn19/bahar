@@ -12,7 +12,6 @@ import java.util.Map;
 /**
  * 会员标签服务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface UserTagService extends IService<MtUserTag> {

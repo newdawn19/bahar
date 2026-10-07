@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * redis 分布式锁工具
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Component

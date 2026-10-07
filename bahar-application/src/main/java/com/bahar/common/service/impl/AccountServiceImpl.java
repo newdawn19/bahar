@@ -40,7 +40,6 @@ import java.util.*;
 /**
  * 后台账号接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

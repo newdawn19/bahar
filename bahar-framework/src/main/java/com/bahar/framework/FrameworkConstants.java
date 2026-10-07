@@ -1,7 +1,6 @@
 package com.bahar.framework;
 
 /**
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class FrameworkConstants {

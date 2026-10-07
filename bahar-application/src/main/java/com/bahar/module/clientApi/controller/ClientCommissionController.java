@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 分佣提成接口controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-店铺相关接口")

@@ -10,7 +10,6 @@ import java.io.Serializable;
 /**
  * 联系人Bean
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

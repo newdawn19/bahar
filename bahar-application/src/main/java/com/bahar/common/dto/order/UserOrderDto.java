@@ -14,7 +14,6 @@ import java.util.List;
 /**
  * 会员订单实体类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

@@ -6,7 +6,6 @@ import java.util.List;
 /**
  * 消息业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface MessageService {

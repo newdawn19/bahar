@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * 商品规格项实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

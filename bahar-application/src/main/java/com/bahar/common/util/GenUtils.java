@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * 代码生成器 工具类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class GenUtils {

@@ -18,7 +18,6 @@ import java.util.Locale;
 /**
  * 会员端登录拦截器
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class ClientUserInterceptor implements AsyncHandlerInterceptor {

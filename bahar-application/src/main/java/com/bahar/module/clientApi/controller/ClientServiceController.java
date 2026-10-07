@@ -23,7 +23,6 @@ import java.util.*;
 /**
  * 会员端-服务相关接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-服务相关接口")

@@ -20,7 +20,6 @@ import java.util.Map;
 /**
  * Http协议上传图片工具类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class HttpPostUploadUtil {

@@ -4,7 +4,6 @@ import java.time.LocalTime;
 import java.util.Optional;
 
 /**
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class QuartzCronUtil {

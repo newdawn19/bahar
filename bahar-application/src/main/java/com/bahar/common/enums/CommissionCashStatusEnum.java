@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 /**
  * 分佣结算状态
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum CommissionCashStatusEnum {

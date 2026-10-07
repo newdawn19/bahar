@@ -16,7 +16,6 @@ import java.util.Map;
 /**
  * 转赠业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface GiveService extends IService<MtGive> {

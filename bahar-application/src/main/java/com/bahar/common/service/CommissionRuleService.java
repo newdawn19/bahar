@@ -11,7 +11,6 @@ import com.bahar.repository.model.MtCommissionRule;
 /**
  * 分销提成规则业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface CommissionRuleService extends IService<MtCommissionRule> {

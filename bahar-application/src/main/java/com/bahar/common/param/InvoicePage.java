@@ -7,7 +7,6 @@ import java.io.Serializable;
 /**
  * 发票分页查询参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

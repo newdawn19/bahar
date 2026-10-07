@@ -34,7 +34,6 @@ import java.util.Map;
 /**
  * 会员等级业务接口实现类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

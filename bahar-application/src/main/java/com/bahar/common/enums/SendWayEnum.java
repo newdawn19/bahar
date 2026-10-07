@@ -3,7 +3,6 @@ package com.bahar.common.enums;
 /**
  * 卡券发放方式
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum SendWayEnum {

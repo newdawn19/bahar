@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * 后台菜单 Mapper 接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface TSourceMapper extends BaseMapper<TSource> {

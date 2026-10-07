@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * 售后订单列表请求参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

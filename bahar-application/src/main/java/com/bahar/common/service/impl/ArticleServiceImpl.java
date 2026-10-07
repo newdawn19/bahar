@@ -36,7 +36,6 @@ import java.util.List;
 /**
  * 文章服务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

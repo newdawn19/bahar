@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * 日收银报表实体类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

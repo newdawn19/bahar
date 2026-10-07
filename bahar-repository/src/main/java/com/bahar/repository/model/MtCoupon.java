@@ -13,7 +13,6 @@ import lombok.Data;
 /**
  * 卡券信息表
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

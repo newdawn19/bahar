@@ -8,7 +8,6 @@ import java.util.Base64;
 /**
  * 编码工具
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class Base64Util {

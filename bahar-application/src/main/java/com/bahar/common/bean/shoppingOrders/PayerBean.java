@@ -10,7 +10,6 @@ import java.io.Serializable;
 /**
  * 支付者，支付者信息Bean
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

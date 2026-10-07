@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 /**
  * 售后类型枚举
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum RefundTypeEnum {

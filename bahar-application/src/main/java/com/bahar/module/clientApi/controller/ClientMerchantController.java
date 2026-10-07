@@ -23,7 +23,6 @@ import java.util.Map;
 /**
  * 商家相关controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @RestController

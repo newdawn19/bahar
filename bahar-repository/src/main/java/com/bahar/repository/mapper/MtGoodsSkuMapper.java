@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * 商品SKU表 Mapper 接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface MtGoodsSkuMapper extends BaseMapper<MtGoodsSku> {

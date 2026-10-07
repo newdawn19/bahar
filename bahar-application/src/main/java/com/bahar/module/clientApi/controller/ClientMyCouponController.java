@@ -23,7 +23,6 @@ import java.util.Map;
 /**
  * 我的卡券controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-我的卡券相关接口")

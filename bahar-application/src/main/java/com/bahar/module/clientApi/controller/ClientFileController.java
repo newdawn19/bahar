@@ -34,7 +34,6 @@ import java.util.Set;
 /**
  * 文件上传管理控制类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-文件上传相关接口")

@@ -9,7 +9,6 @@ import java.util.regex.PatternSyntaxException;
 /**
  * 手机号码验证工具类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class PhoneFormatCheckUtils {

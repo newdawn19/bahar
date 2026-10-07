@@ -15,7 +15,6 @@ import lombok.Setter;
 /**
  * 分佣提成规则项目表
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

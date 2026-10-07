@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * 类型转换器
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class Convert {

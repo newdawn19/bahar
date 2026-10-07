@@ -3,7 +3,6 @@ package com.bahar.common.vo.printer;
 /**
  * 订单统计结果
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class OrderStatisResult {

@@ -11,7 +11,6 @@ import lombok.Data;
 /**
  * 规格表
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

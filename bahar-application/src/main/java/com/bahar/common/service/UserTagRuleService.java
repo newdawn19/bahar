@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * 会员标签规则服务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface UserTagRuleService extends IService<MtUserTagRule> {

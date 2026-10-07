@@ -25,7 +25,6 @@ import java.util.Map;
 /**
  * 代码生成管理类controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-代码生成相关接口")

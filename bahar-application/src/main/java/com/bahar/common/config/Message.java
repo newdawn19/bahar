@@ -3,7 +3,6 @@ package com.bahar.common.config;
 /**
  * 消息定义
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class Message {

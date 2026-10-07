@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * 商品详情实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

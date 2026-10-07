@@ -9,7 +9,6 @@ import java.util.Date;
 /**
  * 后台登录账号信息
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

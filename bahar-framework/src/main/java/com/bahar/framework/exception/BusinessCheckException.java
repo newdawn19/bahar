@@ -3,7 +3,6 @@ package com.bahar.framework.exception;
 /**
  * 业务检查异常
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class BusinessCheckException extends Exception {

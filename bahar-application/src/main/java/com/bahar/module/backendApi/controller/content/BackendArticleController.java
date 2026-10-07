@@ -28,7 +28,6 @@ import java.util.Map;
 /**
  * 文章管理类controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-文章相关接口")

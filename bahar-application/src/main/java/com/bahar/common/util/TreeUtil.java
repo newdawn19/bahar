@@ -11,7 +11,6 @@ import com.bahar.utils.StringUtil;
 /**
  * 树形展示工具类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class TreeUtil {

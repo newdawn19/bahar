@@ -5,7 +5,6 @@ import com.bahar.utils.StringUtil;
 /**
  * 字符串格式化
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class StrFormatter {

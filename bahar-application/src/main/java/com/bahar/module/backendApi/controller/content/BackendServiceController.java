@@ -25,7 +25,6 @@ import java.util.*;
 /**
  * 服务管理类controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-服务管理相关接口")

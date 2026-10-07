@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 /**
  * TreeSelect树结构实体类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class TreeSelect implements Serializable {

@@ -34,7 +34,6 @@ import java.util.Map;
 /**
  * 支付相关接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

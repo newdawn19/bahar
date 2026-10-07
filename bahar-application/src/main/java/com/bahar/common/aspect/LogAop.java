@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 /**
  * 控制器日志
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Slf4j

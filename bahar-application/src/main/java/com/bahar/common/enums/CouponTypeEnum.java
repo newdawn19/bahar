@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 /**
  * 卡券类型枚举
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum CouponTypeEnum {

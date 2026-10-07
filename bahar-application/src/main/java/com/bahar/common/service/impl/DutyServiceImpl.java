@@ -34,7 +34,6 @@ import java.util.List;
 /**
  * 角色服务实现类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

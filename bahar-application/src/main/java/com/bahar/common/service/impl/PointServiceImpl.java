@@ -39,7 +39,6 @@ import java.util.*;
 /**
  * 积分管理业务实现类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

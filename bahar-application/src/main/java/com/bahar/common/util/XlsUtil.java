@@ -21,7 +21,6 @@ import java.util.List;
 /**
  * Excel表格工具类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class XlsUtil {

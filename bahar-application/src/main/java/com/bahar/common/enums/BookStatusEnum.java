@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 /**
  * 预约订单状态枚举
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum BookStatusEnum {

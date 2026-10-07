@@ -3,7 +3,6 @@ package com.bahar.common.enums;
 /**
  * 会员来源渠道
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum MemberSourceEnum {

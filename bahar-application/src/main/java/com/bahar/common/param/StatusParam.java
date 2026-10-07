@@ -10,7 +10,6 @@ import java.io.Serializable;
 /**
  * 状态修改请求参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

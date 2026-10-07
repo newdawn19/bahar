@@ -35,7 +35,6 @@ import java.util.Map;
 /**
  * 系统接口相关controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-系统配置相关接口")

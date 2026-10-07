@@ -36,7 +36,6 @@ import java.util.regex.Pattern;
 /**
  * 卡券管理类controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-卡券管理相关接口")

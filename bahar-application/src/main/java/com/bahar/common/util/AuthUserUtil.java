@@ -6,7 +6,6 @@ import com.bahar.common.dto.system.AccountInfo;
 /**
  * 用户认证工具
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class AuthUserUtil {

@@ -6,7 +6,6 @@ import java.util.List;
 /**
  * 路由配置信息
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)

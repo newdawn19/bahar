@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
  * 会员标签规则定时任务
  * 每天凌晨2点自动执行所有商户的会员标签规则
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @EnableScheduling

@@ -6,7 +6,6 @@ import lombok.Data;
 /**
  * 短信发送返回实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

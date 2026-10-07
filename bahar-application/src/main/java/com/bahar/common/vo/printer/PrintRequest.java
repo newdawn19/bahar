@@ -3,7 +3,6 @@ package com.bahar.common.vo.printer;
 /**
  * 打印机打印请求参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class PrintRequest extends RestRequest {

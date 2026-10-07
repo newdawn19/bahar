@@ -9,7 +9,6 @@ import java.util.Date;
 /**
  * 订单实体类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

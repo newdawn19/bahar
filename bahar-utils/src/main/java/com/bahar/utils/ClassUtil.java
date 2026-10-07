@@ -10,7 +10,6 @@ import java.util.*;
  * 这个类中的每个方法都可以“安全”地处理 <code>null</code> ，而不会抛出 <code>NullPointerException</code>。
  *
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class ClassUtil {

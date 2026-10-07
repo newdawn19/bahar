@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class CommandInterceptor implements AsyncHandlerInterceptor {

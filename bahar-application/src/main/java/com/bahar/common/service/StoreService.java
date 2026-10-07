@@ -15,7 +15,6 @@ import java.util.Map;
 /**
  * 店铺业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface StoreService extends IService<MtStore> {

@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 /**
  * 卡券实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

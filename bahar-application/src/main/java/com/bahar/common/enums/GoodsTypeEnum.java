@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 /**
  * 商品类型
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum GoodsTypeEnum {

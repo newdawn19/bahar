@@ -10,7 +10,6 @@ import java.util.Map;
 /**
  * 云闪付相关业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface UnionPayService {

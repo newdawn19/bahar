@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * 规格表 Mapper 接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface MtGoodsSpecMapper extends BaseMapper<MtGoodsSpec> {

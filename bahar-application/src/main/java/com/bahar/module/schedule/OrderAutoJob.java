@@ -25,7 +25,6 @@ import java.util.Map;
 /**
  * 订单自动确认定时任务
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @EnableScheduling

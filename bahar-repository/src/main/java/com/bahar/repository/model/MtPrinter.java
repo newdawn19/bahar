@@ -12,7 +12,6 @@ import lombok.Data;
 /**
  * 打印机实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

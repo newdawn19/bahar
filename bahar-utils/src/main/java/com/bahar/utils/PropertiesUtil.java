@@ -11,7 +11,6 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  *
  * 消息文案原存放于 international/message_*.properties，已迁移为 international/message_*.yaml。

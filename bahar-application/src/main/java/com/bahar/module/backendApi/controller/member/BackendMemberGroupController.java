@@ -28,7 +28,6 @@ import java.util.Map;
 /**
  * 会员分组管理controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-会员分组相关接口")

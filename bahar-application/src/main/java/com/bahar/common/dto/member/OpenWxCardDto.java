@@ -6,7 +6,6 @@ import lombok.Data;
 /**
  * 开通微信会员卡实体类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

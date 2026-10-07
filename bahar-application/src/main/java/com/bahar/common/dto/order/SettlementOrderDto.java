@@ -8,7 +8,6 @@ import lombok.Data;
 /**
  * 结算订单表
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

@@ -22,7 +22,6 @@ import java.util.*;
 /**
  * 导航管理controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags = "管理端-积分相关接口")

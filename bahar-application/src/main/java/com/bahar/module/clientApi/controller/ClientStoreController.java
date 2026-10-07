@@ -20,7 +20,6 @@ import java.util.Map;
 /**
  * 店铺接口controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-店铺相关接口")

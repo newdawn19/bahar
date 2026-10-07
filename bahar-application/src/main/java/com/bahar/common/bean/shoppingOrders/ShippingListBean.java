@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * 上传发货信息Bean
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

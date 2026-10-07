@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 余额接口controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="商户端-余额相关接口")

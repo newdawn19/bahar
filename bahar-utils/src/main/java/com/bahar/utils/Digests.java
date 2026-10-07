@@ -13,7 +13,6 @@ import java.security.SecureRandom;
  * 
  * 返回ByteSource，可进一步被编码为Hex, Base64或UrlSafeBase64
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class Digests {

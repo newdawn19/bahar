@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * 会员标签关联Mapper接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface MtUserTagRelationMapper extends BaseMapper<MtUserTagRelation> {

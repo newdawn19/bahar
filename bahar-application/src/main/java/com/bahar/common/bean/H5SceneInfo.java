@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSON;
 /**
  * H5支付Bean
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class H5SceneInfo {

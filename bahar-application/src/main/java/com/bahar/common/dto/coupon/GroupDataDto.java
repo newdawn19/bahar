@@ -8,7 +8,6 @@ import java.io.Serializable;
 /**
  * 卡券分组数据DTO
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

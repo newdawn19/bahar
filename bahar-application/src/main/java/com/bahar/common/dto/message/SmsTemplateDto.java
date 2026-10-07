@@ -9,7 +9,6 @@ import java.util.Date;
 /**
  * 短信模板实体类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

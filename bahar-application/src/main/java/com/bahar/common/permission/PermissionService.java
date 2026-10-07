@@ -16,7 +16,6 @@ import java.util.Set;
 /**
  * 权限控制业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service("pms")

@@ -7,7 +7,6 @@ import lombok.Data;
 /**
  * 商户设置实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

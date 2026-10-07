@@ -15,7 +15,6 @@ import java.util.Map;
 /**
  * 库存盘点业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface StockCheckService extends IService<MtStockCheck> {

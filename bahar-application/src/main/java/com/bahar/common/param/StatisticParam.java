@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * 统计请求参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

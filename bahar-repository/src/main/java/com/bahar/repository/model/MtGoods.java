@@ -14,7 +14,6 @@ import java.util.Date;
 /**
  * 商品表
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

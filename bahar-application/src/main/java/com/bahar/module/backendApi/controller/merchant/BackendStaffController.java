@@ -31,7 +31,6 @@ import java.util.Map;
 /**
  * 店铺员工管理
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-店铺员工相关接口")

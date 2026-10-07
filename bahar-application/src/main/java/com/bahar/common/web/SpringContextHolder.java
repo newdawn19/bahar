@@ -6,7 +6,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 /**
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

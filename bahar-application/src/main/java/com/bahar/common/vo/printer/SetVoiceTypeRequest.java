@@ -3,7 +3,6 @@ package com.bahar.common.vo.printer;
 /**
  * 设置打印机语音类型请求参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class SetVoiceTypeRequest extends RestRequest {

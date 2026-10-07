@@ -40,7 +40,6 @@ import java.util.*;
 /**
  * 分销提成服务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

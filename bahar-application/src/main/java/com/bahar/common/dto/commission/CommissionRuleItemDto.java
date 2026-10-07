@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 
 /**
  * 分销提成规则项目实体
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

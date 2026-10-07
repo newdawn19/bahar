@@ -13,7 +13,6 @@ import lombok.Data;
 /**
  * 佣金记录表
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

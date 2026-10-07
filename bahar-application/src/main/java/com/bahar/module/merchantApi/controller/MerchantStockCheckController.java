@@ -24,7 +24,6 @@ import java.util.*;
 /**
  * 商户端-库存盘点controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="商户端-库存盘点相关接口")

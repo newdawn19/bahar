@@ -18,7 +18,6 @@ import java.io.InputStream;
 /**
  * 微信支付配置类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Configuration

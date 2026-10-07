@@ -10,7 +10,6 @@ import java.security.NoSuchAlgorithmException;
 /**
  * SHA-256 工具类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class SHAUtil {

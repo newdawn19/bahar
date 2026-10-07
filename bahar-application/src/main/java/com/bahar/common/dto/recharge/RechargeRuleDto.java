@@ -8,7 +8,6 @@ import java.io.Serializable;
 /**
  * 充值规则实体类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

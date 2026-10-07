@@ -5,7 +5,6 @@ import java.security.MessageDigest;
 /**
  * MD5加密工具
  *
- * Created by: FSQ
  * CopyRight https://www.bahar.cn
  */
 public class MD5Util {

@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * 设置会员标签请求参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

@@ -20,7 +20,6 @@ import java.util.HashMap;
 /**
  * 二维码生成工具类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class QRCodeUtil {

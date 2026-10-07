@@ -28,7 +28,6 @@ import java.util.Map;
 /**
  * 后台公共接口控制器
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-公共接口")

@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * 余额业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface BalanceService extends IService<MtBalance> {

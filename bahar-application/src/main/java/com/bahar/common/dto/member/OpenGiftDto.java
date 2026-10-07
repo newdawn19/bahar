@@ -11,7 +11,6 @@ import java.io.Serializable;
 /**
  * 开卡赠礼实体类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

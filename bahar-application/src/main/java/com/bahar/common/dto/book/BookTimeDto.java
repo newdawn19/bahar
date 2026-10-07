@@ -7,7 +7,6 @@ import java.io.Serializable;
 /**
  * 预约时段Dto
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

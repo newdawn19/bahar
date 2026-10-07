@@ -11,7 +11,6 @@ import java.util.Map;
 /**
  * 发送短信接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface SendSmsService {

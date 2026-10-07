@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * 分销提成规则实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * 菜单信息实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

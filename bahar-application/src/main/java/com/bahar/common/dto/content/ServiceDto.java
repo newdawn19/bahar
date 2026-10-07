@@ -8,7 +8,6 @@ import java.util.Date;
 /**
  * 服务DTO
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

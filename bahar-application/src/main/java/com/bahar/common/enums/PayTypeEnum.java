@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 /**
  * 支付类型
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public enum PayTypeEnum {

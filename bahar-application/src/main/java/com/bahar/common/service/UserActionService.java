@@ -9,7 +9,6 @@ import com.bahar.repository.model.MtUserAction;
 /**
  * 会员行为业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface UserActionService extends IService<MtUserAction> {

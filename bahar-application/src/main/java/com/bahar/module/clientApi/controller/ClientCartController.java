@@ -32,7 +32,6 @@ import java.util.Map;
 /**
  * 购物车controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-购物车相关接口")

@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 /**
  * 分销提成概览数据实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

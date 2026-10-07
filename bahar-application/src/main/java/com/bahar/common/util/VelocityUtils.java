@@ -11,7 +11,6 @@ import org.apache.velocity.VelocityContext;
 /**
  * 模板处理工具类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class VelocityUtils {

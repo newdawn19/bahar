@@ -5,7 +5,6 @@ import java.io.Serializable;
 /**
  * 消息体分页信息
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class Page implements Serializable {

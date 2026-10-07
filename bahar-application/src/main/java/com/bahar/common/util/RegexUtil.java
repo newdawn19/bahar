@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 /**
  * 校验工具类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class RegexUtil {

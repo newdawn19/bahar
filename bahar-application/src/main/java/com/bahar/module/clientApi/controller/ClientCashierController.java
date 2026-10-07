@@ -20,7 +20,6 @@ import java.util.Map;
 /**
  * 收银台controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-收银台相关接口")

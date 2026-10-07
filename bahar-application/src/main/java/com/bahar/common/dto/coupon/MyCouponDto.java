@@ -11,7 +11,6 @@ import java.util.Date;
 /**
  * 我的卡券DTO
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

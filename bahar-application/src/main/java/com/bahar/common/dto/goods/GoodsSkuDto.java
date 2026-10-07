@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 /**
  * 商品sku实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

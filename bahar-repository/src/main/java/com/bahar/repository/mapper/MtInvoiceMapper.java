@@ -10,7 +10,6 @@ import java.util.Date;
 /**
  * 发票 Mapper 接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface MtInvoiceMapper extends BaseMapper<MtInvoice> {

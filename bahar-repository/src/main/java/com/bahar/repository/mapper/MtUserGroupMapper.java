@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * 会员分组 Mapper 接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface MtUserGroupMapper extends BaseMapper<MtUserGroup> {

@@ -35,7 +35,6 @@ import java.util.Map;
 /**
  * 后台角色管理控制类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-后台角色相关接口")

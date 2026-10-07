@@ -37,7 +37,6 @@ import java.util.Map;
 /**
  * 收银管理controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-收银台相关接口")

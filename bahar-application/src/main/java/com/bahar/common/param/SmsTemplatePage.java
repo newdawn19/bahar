@@ -7,7 +7,6 @@ import java.io.Serializable;
 /**
  * 短信模板分页查询参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

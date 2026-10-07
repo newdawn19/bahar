@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * 会员卡券表 Mapper 接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface MtUserCouponMapper extends BaseMapper<MtUserCoupon> {

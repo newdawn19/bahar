@@ -6,7 +6,6 @@ import java.util.Map;
 /**
  * 常量定义
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class Constants {

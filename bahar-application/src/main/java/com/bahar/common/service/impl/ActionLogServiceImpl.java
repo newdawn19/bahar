@@ -21,7 +21,6 @@ import java.util.List;
 /**
  * 日志服务实现类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Service

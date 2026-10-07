@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * 配置业务接口
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public interface SettingService extends IService<MtSetting> {

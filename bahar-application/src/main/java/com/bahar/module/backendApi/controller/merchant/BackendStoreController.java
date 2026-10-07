@@ -32,7 +32,6 @@ import java.util.Map;
 /**
  * 店铺管理类controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Slf4j

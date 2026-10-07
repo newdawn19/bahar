@@ -8,7 +8,6 @@ import java.io.Serializable;
 /**
  * 登录Token实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

@@ -8,7 +8,6 @@ import java.io.Serializable;
 /**
  * 转赠记录分页查询参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

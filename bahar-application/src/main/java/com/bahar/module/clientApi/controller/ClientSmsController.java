@@ -26,7 +26,6 @@ import java.util.Map;
 /**
  * 手机短信controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-手机短信相关接口")

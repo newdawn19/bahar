@@ -28,7 +28,6 @@ import java.util.Map;
 /**
  * 焦点图管理类controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags = "管理端-焦点图相关接口")

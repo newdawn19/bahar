@@ -36,7 +36,6 @@ import java.util.Map;
 /**
  * 打印机管理类controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-打印机相关接口")

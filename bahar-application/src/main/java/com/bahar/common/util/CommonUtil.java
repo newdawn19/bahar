@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 /**
  * 通用工具
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 public class CommonUtil {

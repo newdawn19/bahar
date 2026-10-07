@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * 购物车返回DTO
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

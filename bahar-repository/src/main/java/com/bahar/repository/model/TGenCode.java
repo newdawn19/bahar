@@ -12,7 +12,6 @@ import lombok.Data;
 /**
  * 生成代码实体类
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

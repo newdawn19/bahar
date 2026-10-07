@@ -12,7 +12,6 @@ import lombok.Data;
 /**
  * 后台管理员表
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

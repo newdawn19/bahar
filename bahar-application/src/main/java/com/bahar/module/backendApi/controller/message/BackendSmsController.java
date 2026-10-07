@@ -28,7 +28,6 @@ import java.util.Map;
 /**
  * 短信管理类controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="管理端-短信相关接口")

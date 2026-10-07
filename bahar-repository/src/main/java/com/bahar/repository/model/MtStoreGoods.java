@@ -13,7 +13,6 @@ import java.util.Date;
 /**
  * 店铺商品实体
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

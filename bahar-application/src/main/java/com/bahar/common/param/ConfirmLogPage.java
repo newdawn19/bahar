@@ -7,7 +7,6 @@ import java.io.Serializable;
 /**
  * 卡券核销流水请求参数
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Data

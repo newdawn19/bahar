@@ -34,7 +34,6 @@ import java.util.Map;
 /**
  * 邀请controller
  *
- * Created by FSQ
  * CopyRight https://www.bahar.cn
  */
 @Api(tags="会员端-邀请相关接口")
