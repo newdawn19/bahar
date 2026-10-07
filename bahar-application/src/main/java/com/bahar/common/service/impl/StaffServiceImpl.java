@@ -123,6 +123,23 @@ public class StaffServiceImpl extends ServiceImpl<MtStaffMapper, MtStaff> implem
                      MtStore mtStore = storeService.queryStoreById(mtStaff.getStoreId());
                      staffDto.setStoreInfo(mtStore);
                  }
+                 // 员工列表要能在界面上体现「所属商户」，这里一并把商户信息带出去
+                 // （原先只装配了 storeInfo，导致列表拿不到商户名）
+                 if (mtStaff.getMerchantId() != null && mtStaff.getMerchantId() > 0) {
+                     MtMerchant mtMerchant = merchantService.getById(mtStaff.getMerchantId());
+                     if (mtMerchant != null) {
+                         staffDto.setMerchantInfo(mtMerchant);
+                     }
+                 }
+                 // 体现「员工 ↔ 会员」这一环：带出会员号与会员姓名（只取这两个字段，避免把
+                 // 密码/盐值/openId 等敏感字段随列表返回给前端）
+                 if (mtStaff.getUserId() != null && mtStaff.getUserId() > 0) {
+                     MtUser member = memberService.queryMemberById(mtStaff.getUserId());
+                     if (member != null) {
+                         staffDto.setUserNo(member.getUserNo());
+                         staffDto.setUserName(member.getName());
+                     }
+                 }
                  dataList.add(staffDto);
             }
         }

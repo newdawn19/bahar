@@ -22,9 +22,11 @@ import com.bahar.framework.exception.BusinessCheckException;
 import com.bahar.framework.pagination.PaginationResponse;
 import com.bahar.repository.bean.StoreDistanceBean;
 import com.bahar.repository.mapper.MtMerchantMapper;
+import com.bahar.repository.mapper.MtStaffMapper;
 import com.bahar.repository.mapper.MtStoreGoodsMapper;
 import com.bahar.repository.mapper.MtStoreMapper;
 import com.bahar.repository.model.MtMerchant;
+import com.bahar.repository.model.MtStaff;
 import com.bahar.repository.model.MtStore;
 import com.bahar.utils.HttpUtil;
 import com.bahar.utils.StringUtil;
@@ -71,6 +73,7 @@ public class StoreServiceImpl extends ServiceImpl<MtStoreMapper, MtStore> implem
     private MtStoreMapper mtStoreMapper;
 
     private MtMerchantMapper mtMerchantMapper;
+    private MtStaffMapper mtStaffMapper;
 
     private MtStoreGoodsMapper mtStoreGoodsMapper;
 
@@ -125,6 +128,10 @@ public class StoreServiceImpl extends ServiceImpl<MtStoreMapper, MtStore> implem
              if (mtMerchant != null) {
                  storeDto.setMerchantName(mtMerchant.getName());
              }
+             // 关联关键字：这家门店下有多少员工
+             LambdaQueryWrapper<MtStaff> staffWrapper = Wrappers.lambdaQuery();
+             staffWrapper.eq(MtStaff::getStoreId, mtStore.getId()).ne(MtStaff::getAuditedStatus, StatusEnum.DISABLE.getKey());
+             storeDto.setStaffCount(mtStaffMapper.selectCount(staffWrapper).intValue());
              dataList.add(storeDto);
         }
 

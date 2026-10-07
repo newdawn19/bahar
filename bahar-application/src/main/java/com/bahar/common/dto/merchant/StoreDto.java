@@ -42,4 +42,7 @@ public class StoreDto extends StoreInfo implements Serializable {
     @ApiModelProperty("银行卡卡号")
     private String bankCardNo;
 
+    @ApiModelProperty("关联员工数")
+    private Integer staffCount;
+
 }

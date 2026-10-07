@@ -65,6 +65,12 @@ public class MerchantDto implements Serializable {
     @ApiModelProperty("最后操作人")
     private String operator;
 
+    @ApiModelProperty("关联门店数")
+    private Integer storeCount;
+
+    @ApiModelProperty("关联员工数")
+    private Integer staffCount;
+
     @ApiModelProperty("有效期开始时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date startTime;

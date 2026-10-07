@@ -8,6 +8,7 @@ import com.bahar.common.enums.StatusEnum;
 import com.bahar.common.param.StaffPage;
 import com.bahar.common.param.StaffParam;
 import com.bahar.common.param.StatusParam;
+import com.bahar.common.service.MemberService;
 import com.bahar.common.service.StaffService;
 import com.bahar.common.util.CommonUtil;
 import com.bahar.common.util.PhoneFormatCheckUtils;
@@ -17,12 +18,15 @@ import com.bahar.framework.pagination.PaginationResponse;
 import com.bahar.framework.web.BaseController;
 import com.bahar.framework.web.ResponseObject;
 import com.bahar.repository.model.MtStaff;
+import com.bahar.repository.model.MtUser;
 import com.bahar.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.beans.BeanUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +47,11 @@ public class BackendStaffController extends BaseController {
      * 员工接口
      */
     private StaffService staffService;
+
+    /**
+     * 会员接口（用于把已有会员账号关联成员工）
+     */
+    private MemberService memberService;
 
     /**
      * 获取员工列表
@@ -119,6 +128,20 @@ public class BackendStaffController extends BaseController {
         mtStaff.setAuditedStatus(staffParam.getAuditedStatus() == null ? StatusEnum.FORBIDDEN.getKey() : staffParam.getAuditedStatus());
         mtStaff.setDescription(staffParam.getDescription());
         mtStaff.setCategory(staffParam.getCategory());
+        // 关联已有会员：会员号（如 U00000001）优先，其次会员ID；
+        // 命中则直接把该会员挂成员工（saveStaff 会将其 isStaff 置为 Y），
+        // 都没传才沿用原逻辑——由系统自动注册一个新会员账号再回填。
+        Integer bindUserId = staffParam.getUserId();
+        if (StringUtil.isNotEmpty(staffParam.getUserNo())) {
+            MtUser bindUser = memberService.queryMemberByUserNo(accountInfo.getMerchantId(), staffParam.getUserNo().trim());
+            if (bindUser == null) {
+                return getFailureResult(201, "会员号不存在：" + staffParam.getUserNo());
+            }
+            bindUserId = bindUser.getId();
+        }
+        if (bindUserId != null && bindUserId > 0) {
+            mtStaff.setUserId(bindUserId);
+        }
 
         if (StringUtil.isEmpty(mtStaff.getMobile())) {
             return getFailureResult(201, "手机号码不能为空");
@@ -142,15 +165,25 @@ public class BackendStaffController extends BaseController {
     public ResponseObject getStaffInfo(@PathVariable("id") Integer id) {
         AccountInfo accountInfo = TokenUtil.getAccountInfo();
         MtStaff staffInfo = staffService.queryStaffById(id);
-        if (accountInfo.getMerchantId() > 0 && !accountInfo.getMerchantId().equals(staffInfo.getMerchantId())) {
-            return getFailureResult(1004);
-        }
-
-        if (staffInfo != null) {
-            staffInfo.setMobile(CommonUtil.hidePhone(staffInfo.getMobile()));
-        }
         Map<String, Object> result = new HashMap<>();
-        result.put("staffInfo", staffInfo);
+        if (staffInfo != null) {
+            if (accountInfo.getMerchantId() > 0 && !accountInfo.getMerchantId().equals(staffInfo.getMerchantId())) {
+                return getFailureResult(1004);
+            }
+            // 用 StaffDto 返回，除了脱敏手机号，还带上已绑定的会员号，
+            // 这样编辑员工时「关联会员号」一栏能回填，不会看着像没绑定。
+            StaffDto staffDto = new StaffDto();
+            BeanUtils.copyProperties(staffInfo, staffDto);
+            staffDto.setMobile(CommonUtil.hidePhone(staffInfo.getMobile()));
+            if (staffInfo.getUserId() != null && staffInfo.getUserId() > 0) {
+                MtUser member = memberService.queryMemberById(staffInfo.getUserId());
+                if (member != null) {
+                    staffDto.setUserNo(member.getUserNo());
+                    staffDto.setUserName(member.getName());
+                }
+            }
+            result.put("staffInfo", staffDto);
+        }
 
         return getSuccessResult(result);
     }

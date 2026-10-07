@@ -24,10 +24,12 @@ import com.bahar.module.merchantApi.request.MerchantSettingParam;
 import com.bahar.repository.mapper.MtGoodsMapper;
 import com.bahar.repository.mapper.MtMerchantMapper;
 import com.bahar.repository.mapper.MtStoreMapper;
+import com.bahar.repository.mapper.MtStaffMapper;
 import com.bahar.repository.model.MtGoods;
 import com.bahar.repository.model.MtMerchant;
 import com.bahar.repository.model.MtSetting;
 import com.bahar.repository.model.MtStore;
+import com.bahar.repository.model.MtStaff;
 import com.bahar.utils.StringUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -57,6 +59,7 @@ public class MerchantServiceImpl extends ServiceImpl<MtMerchantMapper, MtMerchan
     private MtMerchantMapper mtMerchantMapper;
 
     private MtStoreMapper mtStoreMapper;
+    private MtStaffMapper mtStaffMapper;
 
     private MtGoodsMapper mtGoodsMapper;
 
@@ -103,6 +106,13 @@ public class MerchantServiceImpl extends ServiceImpl<MtMerchantMapper, MtMerchan
                  MerchantDto merchantDto = new MerchantDto();
                  BeanUtils.copyProperties(mtMerchant, merchantDto);
                  merchantDto.setPhone(CommonUtil.hidePhone(mtMerchant.getPhone()));
+                 // 关联关键字：这个商户下挂了多少门店、多少员工，后台列表直接体现关联规模
+                 LambdaQueryWrapper<MtStore> storeWrapper = Wrappers.lambdaQuery();
+                 storeWrapper.eq(MtStore::getMerchantId, mtMerchant.getId()).ne(MtStore::getStatus, StatusEnum.DISABLE.getKey());
+                 merchantDto.setStoreCount(mtStoreMapper.selectCount(storeWrapper).intValue());
+                 LambdaQueryWrapper<MtStaff> staffWrapper = Wrappers.lambdaQuery();
+                 staffWrapper.eq(MtStaff::getMerchantId, mtMerchant.getId()).ne(MtStaff::getAuditedStatus, StatusEnum.DISABLE.getKey());
+                 merchantDto.setStaffCount(mtStaffMapper.selectCount(staffWrapper).intValue());
                  dataList.add(merchantDto);
             }
         }

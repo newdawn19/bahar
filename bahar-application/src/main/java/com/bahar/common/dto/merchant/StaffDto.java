@@ -54,6 +54,12 @@ public class StaffDto implements Serializable {
     @ApiModelProperty("备注")
     private String description;
 
+    @ApiModelProperty("关联会员号，如 U00000001；为空表示这条员工记录还没绑定会员账号")
+    private String userNo;
+
+    @ApiModelProperty("关联会员姓名")
+    private String userName;
+
     @ApiModelProperty("商户信息")
     private MtMerchant merchantInfo;
 

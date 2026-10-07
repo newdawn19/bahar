@@ -36,4 +36,10 @@ public class StaffParam extends PageParam implements Serializable {
     @ApiModelProperty(value="审核状态", name="auditedStatus")
     private String auditedStatus;
 
+    @ApiModelProperty(value="关联的会员ID，传入则把该已有会员直接挂为员工；不传则由系统自动注册一个新会员账号", name="userId")
+    private Integer userId;
+
+    @ApiModelProperty(value="关联的会员号，如 U00000001，与 userId 二选一，会员号优先", name="userNo")
+    private String userNo;
+
 }
