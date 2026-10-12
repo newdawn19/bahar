@@ -140,6 +140,11 @@ public class ClientSystemController extends BaseController {
             storeInfo = null;
         }
 
+        // 门店LOGO拼成完整可访问URL（与商品/轮播图一致，避免前端按H5页面相对路径解析失败）
+        if (storeInfo != null && StringUtil.isNotEmpty(storeInfo.getLogo())) {
+            storeInfo.setLogo(settingService.getUploadBasePath() + storeInfo.getLogo());
+        }
+
         // 是否单店铺
         storeInfo.setSingle(YesOrNoEnum.YES.getKey());
         if (storeInfo != null) {

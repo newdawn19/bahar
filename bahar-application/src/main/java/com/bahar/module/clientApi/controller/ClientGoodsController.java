@@ -1,6 +1,7 @@
 package com.bahar.module.clientApi.controller;
 
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.bahar.common.dto.goods.*;
 import com.bahar.common.enums.StatusEnum;
 import com.bahar.common.enums.YesOrNoEnum;
@@ -43,6 +44,11 @@ public class ClientGoodsController extends BaseController {
      * 商品服务接口
      * */
     private GoodsService goodsService;
+
+    /**
+     * JSON 解析（Jackson，规避 fastjson2 在 JDK9+ 上 Unsafe 读取 String.coder 崩溃）
+     * */
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * 商品类别服务接口
@@ -170,7 +176,14 @@ public class ClientGoodsController extends BaseController {
         goodsDetailDto.setIsMemberDiscount(goodsDto.getIsMemberDiscount());
         goodsDetailDto.setGradeIds(goodsDto.getGradeIds());
 
-        List<String> images = JSONObject.parseArray(goodsDto.getImages(), String.class);
+        List<String> images = new ArrayList<>();
+        if (StringUtil.isNotEmpty(goodsDto.getImages())) {
+            try {
+                images = objectMapper.readValue(goodsDto.getImages(), new TypeReference<List<String>>() {});
+            } catch (Exception ignored) {
+                images = new ArrayList<>();
+            }
+        }
         List<String> imageList = new ArrayList<>();
         String baseImage = settingService.getUploadBasePath();
         for (String image : images) {
