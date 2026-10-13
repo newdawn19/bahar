@@ -8,6 +8,14 @@
         </if>
     </select>
 
+    <!-- 账号密码登录专用：按手机号(mobile)或会员号(user_no)匹配，含员工(IS_STAFF='Y')；不使用姓名(姓名可重复) -->
+    <select id="queryMemberByMobileOrUserNo" resultType="com.bahar.repository.model.MtUser">
+        select * from mt_user t where (t.MOBILE = #{account} or t.USER_NO = #{account}) and t.STATUS = 'A'
+        <if test="merchantId != null and merchantId > 0">
+            AND t.MERCHANT_ID = #{merchantId}
+        </if>
+    </select>
+
     <select id="queryMemberByName" resultType="com.bahar.repository.model.MtUser">
         select * from mt_user t where (t.NAME = #{name} or t.mobile = #{name}) and t.STATUS = 'A'
         <if test="merchantId != null and merchantId > 0">

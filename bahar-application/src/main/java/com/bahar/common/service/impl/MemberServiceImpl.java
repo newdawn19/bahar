@@ -613,6 +613,14 @@ public class MemberServiceImpl extends ServiceImpl<MtUserMapper, MtUser> impleme
         }
     }
 
+    @Override
+    public List<MtUser> queryMemberByMobileOrUserNo(Integer merchantId, String account) {
+        if (account == null || StringUtil.isEmpty(account)) {
+            return null;
+        }
+        return mtUserMapper.queryMemberByMobileOrUserNo(merchantId, account);
+    }
+
     /**
      * 根据会员号号获取会员信息
      *

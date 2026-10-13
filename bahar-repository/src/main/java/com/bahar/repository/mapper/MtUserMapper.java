@@ -18,6 +18,15 @@ public interface MtUserMapper extends BaseMapper<MtUser> {
 
     List<MtUser> queryMemberByMobile(@Param("merchantId") Integer merchantId, @Param("mobile") String mobile);
 
+    /**
+     * 账号密码登录专用：按手机号或会员号匹配会员（含员工），不使用姓名。
+     *
+     * @param merchantId 商户ID
+     * @param account    账号（手机号 mobile 或会员号 user_no）
+     * @return 命中的会员列表
+     */
+    List<MtUser> queryMemberByMobileOrUserNo(@Param("merchantId") Integer merchantId, @Param("account") String account);
+
     List<MtUser> queryMemberByName(@Param("merchantId") Integer merchantId, @Param("name") String name);
 
     MtUser queryMemberByOpenId(@Param("merchantId") Integer merchantId, @Param("openId") String openId);

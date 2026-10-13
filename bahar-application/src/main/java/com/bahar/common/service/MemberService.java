@@ -129,6 +129,15 @@ public interface MemberService extends IService<MtUser> {
     MtUser queryMemberByMobile(Integer merchantId, String mobile);
 
     /**
+     * 按手机号(mobile)或会员号(user_no)查询会员列表（账号密码登录专用，含员工，不使用姓名）。
+     *
+     * @param merchantId 商户ID
+     * @param account    账号（手机号或会员号）
+     * @return 命中的会员列表，入参为空时返回 null
+     */
+    List<MtUser> queryMemberByMobileOrUserNo(Integer merchantId, String account);
+
+    /**
      * 根据会员号获取会员信息
      *
      * @param  merchantId 商户ID
