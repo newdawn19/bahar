@@ -1,4 +1,5 @@
 package com.bahar.common.service.impl;
+import com.bahar.utils.I18nContext;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -326,7 +327,7 @@ public class OpenGiftServiceImpl extends ServiceImpl<MtOpenGiftMapper, MtOpenGif
             msg.setIsSend(YesOrNoEnum.YES.getKey());
             msg.setParams("");
             if (totalAmount.compareTo(new BigDecimal("0")) > 0 && totalPoint > 0) {
-                msg.setContent("系统赠送您价值￥" + totalAmount + "卡券和" + totalPoint + "积分，请注意查收！");
+                msg.setContent("系统赠送您价值" + I18nContext.currency() + totalAmount + "卡券和" + totalPoint + "积分，请注意查收！");
                 messageService.addMessage(msg);
             } else if(totalAmount.compareTo(new BigDecimal("0")) > 0) {
                 msg.setContent("系统赠送您价值" + totalAmount + "卡券，请注意查收！");

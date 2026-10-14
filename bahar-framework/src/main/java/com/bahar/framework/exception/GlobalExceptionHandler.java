@@ -1,6 +1,7 @@
 package com.bahar.framework.exception;
 
 import com.bahar.framework.web.ResponseObject;
+import com.bahar.utils.I18nContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
@@ -29,7 +30,7 @@ public class GlobalExceptionHandler {
     public ResponseObject handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',不支持'{}'请求", requestURI, e.getMethod());
-        return new ResponseObject(201, e.getMessage(), null);
+        return new ResponseObject(201, I18nContext.t(e.getMessage()), null);
     }
 
     /**
@@ -38,7 +39,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessCheckException.class)
     public ResponseObject handleServiceException(BusinessCheckException e) {
         log.error(e.getMessage(), e);
-        return new ResponseObject(201, e.getMessage(), null);
+        return new ResponseObject(201, I18nContext.t(e.getMessage()), null);
     }
 
     /**
@@ -48,7 +49,7 @@ public class GlobalExceptionHandler {
     public ResponseObject handleMissingPathVariableException(MissingPathVariableException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.error("请求路径中缺少必需的路径变量'{}',发生系统异常.", requestURI, e);
-        return new ResponseObject(201, String.format("请求路径中缺少必需的路径变量[%s]", e.getVariableName()), null);
+        return new ResponseObject(201, I18nContext.t(String.format("请求路径中缺少必需的路径变量[%s]", e.getVariableName())), null);
     }
 
     /**
@@ -58,7 +59,7 @@ public class GlobalExceptionHandler {
     public ResponseObject handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.error("请求参数类型不匹配'{}',发生系统异常.", requestURI, e);
-        return new ResponseObject(201, String.format("请求参数类型不匹配，参数[%s]要求类型为：'%s'，但输入值为：'%s'", e.getName(), e.getRequiredType().getName(), e.getValue()), null);
+        return new ResponseObject(201, I18nContext.t(String.format("请求参数类型不匹配，参数[%s]要求类型为：'%s'，但输入值为：'%s'", e.getName(), e.getRequiredType().getName(), e.getValue())), null);
     }
 
     /**
@@ -69,7 +70,7 @@ public class GlobalExceptionHandler {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',发生未知异常.", requestURI, e);
         e.printStackTrace();
-        return new ResponseObject(201, e.getMessage(), null);
+        return new ResponseObject(201, I18nContext.t(e.getMessage()), null);
     }
 
     /**
@@ -80,7 +81,7 @@ public class GlobalExceptionHandler {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',发生系统异常.", requestURI, e);
         e.printStackTrace();
-        return new ResponseObject(201, e.getMessage(), null);
+        return new ResponseObject(201, I18nContext.t(e.getMessage()), null);
     }
 
     /**
@@ -90,7 +91,7 @@ public class GlobalExceptionHandler {
     public ResponseObject handleBindException(BindException e) {
         log.error(e.getMessage(), e);
         String message = e.getAllErrors().get(0).getDefaultMessage();
-        return new ResponseObject(201,message, null);
+        return new ResponseObject(201, I18nContext.t(message), null);
     }
 
     /**
@@ -100,6 +101,6 @@ public class GlobalExceptionHandler {
     public Object handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
         String message = e.getBindingResult().getFieldError().getDefaultMessage();
-        return new ResponseObject(201,message, null);
+        return new ResponseObject(201, I18nContext.t(message), null);
     }
 }

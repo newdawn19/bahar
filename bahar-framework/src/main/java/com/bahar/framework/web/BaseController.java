@@ -1,6 +1,7 @@
 package com.bahar.framework.web;
 
 import com.bahar.framework.FrameworkConstants;
+import com.bahar.utils.I18nContext;
 import com.bahar.utils.PropertiesUtil;
 
 /**
@@ -17,7 +18,7 @@ public class BaseController {
      * @return
      */
     public ResponseObject getSuccessResult(Object data) {
-        return new ResponseObject(FrameworkConstants.HTTP_RESPONSE_CODE_SUCCESS, "操作成功", data);
+        return new ResponseObject(FrameworkConstants.HTTP_RESPONSE_CODE_SUCCESS, I18nContext.t("操作成功"), data);
     }
 
     /**
@@ -28,7 +29,7 @@ public class BaseController {
      * @return
      */
     public ResponseObject getSuccessResult(String message, Object data) {
-        return new ResponseObject(FrameworkConstants.HTTP_RESPONSE_CODE_SUCCESS, message, data);
+        return new ResponseObject(FrameworkConstants.HTTP_RESPONSE_CODE_SUCCESS, I18nContext.t(message), data);
     }
 
     /**
@@ -40,7 +41,7 @@ public class BaseController {
      * @return
      */
     public ResponseObject getSuccessResult(int code, String message, Object data) {
-        return new ResponseObject(code, message, data);
+        return new ResponseObject(code, I18nContext.t(message), data);
     }
 
     /**
@@ -61,7 +62,7 @@ public class BaseController {
      * @return
      */
     public ResponseObject getFailureResult(int errorCode, String message) {
-        return new ResponseObject(errorCode, message, null);
+        return new ResponseObject(errorCode, I18nContext.t(message), null);
     }
 
     /**
@@ -69,9 +70,10 @@ public class BaseController {
      *
      * @param errorCode
      * @param message
+     * @param data
      * @return
      */
     public ResponseObject getFailureResult(int errorCode, String message, Object data) {
-        return new ResponseObject(errorCode, message, data);
+        return new ResponseObject(errorCode, I18nContext.t(message), data);
     }
 }

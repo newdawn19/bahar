@@ -1,4 +1,5 @@
 package com.bahar.common.service.impl;
+import com.bahar.utils.I18nContext;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -508,7 +509,7 @@ public class UserCouponServiceImpl extends ServiceImpl<MtUserCouponMapper, MtUse
 
                 // 储值卡tips
                 if (couponInfo.getType().equals(CouponTypeEnum.PRESTORE.getKey())) {
-                    tips = "￥" + userCouponDto .getAmount() + "，余额￥" + userCouponDto.getBalance();
+                    tips = "" + I18nContext.currency() + userCouponDto .getAmount() + "，余额" + I18nContext.currency() + userCouponDto.getBalance();
                 }
 
                 // 计次卡tips
