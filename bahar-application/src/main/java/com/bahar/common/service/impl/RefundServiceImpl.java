@@ -1,4 +1,5 @@
 package com.bahar.common.service.impl;
+import com.bahar.utils.I18nContext;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -585,7 +586,7 @@ public class RefundServiceImpl extends ServiceImpl<MtRefundMapper, MtRefund> imp
                 mtPoint.setAmount(amount.intValue());
                 mtPoint.setUserId(orderInfo.getUserId());
                 mtPoint.setOrderSn(orderInfo.getOrderSn());
-                mtPoint.setDescription("退款￥" + orderInfo.getPayAmount() + "退回" + pointNum + "积分");
+                mtPoint.setDescription("退款" + I18nContext.currency() + orderInfo.getPayAmount() + "退回" + pointNum + "积分");
                 mtPoint.setOperator(refundDto.getOperator() == null ? "系统" : refundDto.getOperator());
                 pointService.addPoint(mtPoint);
             }

@@ -1,4 +1,5 @@
 package com.bahar.common.service.impl;
+import com.bahar.utils.I18nContext;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -1697,7 +1698,7 @@ public class OrderServiceImpl extends ServiceImpl<MtOrderMapper, MtOrder> implem
                 reqPointDto.setAmount(pointNum.intValue());
                 reqPointDto.setUserId(orderInfo.getUserId());
                 reqPointDto.setOrderSn(orderInfo.getOrderSn());
-                reqPointDto.setDescription("支付￥"+orderInfo.getPayAmount()+"返"+pointNum+"积分");
+                reqPointDto.setDescription("支付" + I18nContext.currency()+orderInfo.getPayAmount()+"返"+pointNum+"积分");
                 reqPointDto.setOperator("系统");
                 pointService.addPoint(reqPointDto);
             }
@@ -1891,7 +1892,7 @@ public class OrderServiceImpl extends ServiceImpl<MtOrderMapper, MtOrder> implem
                         OrderGoodsDto goodsDto = new OrderGoodsDto();
                         goodsDto.setId(coupon.getId());
                         goodsDto.setType(OrderTypeEnum.PRESTORE.getKey());
-                        goodsDto.setName("预存￥" + item[0] + "到账￥" + item[1]);
+                        goodsDto.setName("预存" + I18nContext.currency() + item[0] + "到账" + I18nContext.currency() + item[1]);
                         goodsDto.setNum(Double.parseDouble(item[2]));
                         goodsDto.setPrice(item[0]);
                         goodsDto.setDiscount("0");
